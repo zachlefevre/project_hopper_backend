@@ -1,0 +1,27 @@
+syntax = 'proto3';
+package pb;
+
+service EventStore{
+    rpc CreateEvent(Event) returns (Response) {}
+}
+
+message EventFilter{
+
+}
+message EventResponse{
+    repeated Event events = 1;
+}
+
+message Event {
+    string event_id = 1;
+    string event_type = 2;
+    string aggregate_id = 3;
+    string aggregate_type = 4;
+    string event_data = 5;
+    string channel = 6;
+}
+
+message Response {
+    bool is_successful = 1;
+    string error = 2;
+}
