@@ -67,6 +67,9 @@ func publishEvent(comp *natsutil.StreamingComponent, event *pb.Event) {
 	sc := comp.NATS()
 	channel := event.Channel
 	eventMsg := []byte(event.EventData)
-	sc.Publish(channel, eventMsg)
+	err := sc.Publish(channel, eventMsg)
+	if err != nil {
+		log.Fatal("failed to publish", err)
+	}
 	log.Println("Published message on channel: " + channel)
 }
