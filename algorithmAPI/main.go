@@ -48,8 +48,10 @@ func createAlgorithm(w http.ResponseWriter, r *http.Request) {
 		http.Error(w, "Invalid Algorithm", 500)
 		return
 	}
-	aggregateID, _ := uuid.NewV4()
-	createCmd.Id = aggregateID.String()
+	cmdID, _ := uuid.NewV4()
+	createCmd.Id = cmdID.String()
+	algoID, _ := uuid.NewV4()
+	createCmd.Algorithm.Id = algoID.String()
 	createCmd.CreatedOn = time.Now().Unix()
 	err = createAlgorithmRPC(createCmd)
 	if err != nil {
