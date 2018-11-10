@@ -19,7 +19,7 @@ import (
 const (
 	client_id         = "algorithm-repository"
 	cluster_id        = "test-cluster"
-	subscribe_channel = "algorithm-created"
+	subscribe_channel = "create-algorithm"
 	grpcUri           = "localhost:50051"
 	event             = "algorithm-added-to-registry"
 	aggregate         = "algorithms"

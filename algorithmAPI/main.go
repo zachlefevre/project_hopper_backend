@@ -15,7 +15,7 @@ import (
 )
 
 const (
-	created_event = "algorithm-created"
+	created_event = "create-algorithm"
 	aggregate     = "algorithm"
 	grpcUri       = "localhost:50051"
 )
