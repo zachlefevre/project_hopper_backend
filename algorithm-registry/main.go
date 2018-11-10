@@ -7,8 +7,8 @@ import (
 	"runtime"
 	"time"
 
+	"github.com/gofrs/uuid"
 	"github.com/pkg/errors"
-	uuid "github.com/satori/go.uuid"
 	"github.com/zachlefevre/project_hopper_backend/com"
 
 	"github.com/nats-io/go-nats-streaming"

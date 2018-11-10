@@ -7,9 +7,9 @@ import (
 	"net/http"
 	"time"
 
+	"github.com/gofrs/uuid"
 	"github.com/gorilla/mux"
 	"github.com/pkg/errors"
-	uuid "github.com/satori/go.uuid"
 	"github.com/zachlefevre/project_hopper_backend/com"
 	"google.golang.org/grpc"
 )
@@ -26,7 +26,9 @@ func main() {
 		Handler: initRoutes(),
 	}
 	log.Println("Http Server Listening...")
-	server.ListenAndServe()
+	if err := server.ListenAndServe(); err != nil {
+		log.Fatal(err)
+	}
 }
 
 func initRoutes() *mux.Router {
