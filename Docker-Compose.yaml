@@ -1,0 +1,15 @@
+version: '3'
+services:
+  api:
+    build:
+      context: algorithmAPI
+    ports:
+      - "3000:3000"
+  registry:
+    build:
+      context: algorithm-registry
+  store:
+    build:
+      context: eventstore
+    ports:
+      - "50051:50051"
