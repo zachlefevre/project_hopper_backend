@@ -5,6 +5,8 @@ import (
 	"log"
 	"net"
 
+	"github.com/gofrs/uuid"
+
 	"github.com/nats-io/go-nats-streaming"
 	"google.golang.org/grpc"
 
@@ -15,9 +17,9 @@ import (
 )
 
 const (
-	port      = ":50051"
-	clusterID = "test-cluster"
-	clientId  = "event-store-api"
+	port         = ":50051"
+	clusterID    = "test-cluster"
+	baseClientId = "eventstore"
 )
 
 type Server struct {
@@ -25,12 +27,14 @@ type Server struct {
 }
 
 func main() {
+	cid, _ := uuid.NewV4()
+	clientId := baseClientId + cid.String()
 	lis, err := net.Listen("tcp", port)
 	if err != nil {
 		log.Fatalf("failed to listen: %v", err)
 	}
 
-	comp := natsutil.NewStreamingComponent(clusterID)
+	comp := natsutil.NewStreamingComponent(clientId)
 
 	err = comp.ConnectToNatsStreamingService(clusterID, stan.NatsURL(stan.DefaultNatsURL))
 	if err != nil {
