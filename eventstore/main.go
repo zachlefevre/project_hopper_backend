@@ -4,6 +4,7 @@ import (
 	"context"
 	"log"
 	"net"
+	"time"
 
 	"github.com/gofrs/uuid"
 
@@ -20,6 +21,7 @@ const (
 	port         = ":50051"
 	clusterID    = "test-cluster"
 	baseClientId = "eventstore"
+	natsUrl      = "nats:4222"
 )
 
 type Server struct {
@@ -36,7 +38,7 @@ func main() {
 
 	comp := natsutil.NewStreamingComponent(clientId)
 
-	err = comp.ConnectToNatsStreamingService(clusterID, stan.NatsURL(stan.DefaultNatsURL))
+	err = comp.ConnectToNatsStreamingService(clusterID, stan.NatsURL(natsUrl), stan.ConnectWait(100*time.Second))
 	if err != nil {
 		log.Fatal(err)
 	}
