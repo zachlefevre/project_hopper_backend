@@ -1,5 +1,9 @@
 version: '3'
 services:
+  nats:
+    image: nats-streaming
+    ports:
+        - "4222:4222"
   api:
     build:
       context: algorithmAPI
