@@ -17,7 +17,7 @@ import (
 const (
 	created_event = "create-algorithm"
 	aggregate     = "algorithm"
-	grpcUri       = "localhost:50051"
+	grpcUri       = "eventstore:50051"
 )
 
 func main() {
