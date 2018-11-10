@@ -17,17 +17,19 @@ import (
 )
 
 const (
-	client_id         = "algorithm-repository"
+	baseClient_id     = "algorithm-repository"
 	cluster_id        = "test-cluster"
 	subscribe_channel = "create-algorithm"
-	grpcUri           = "localhost:50051"
+	grpcUri           = "eventstore:50051"
 	event             = "algorithm-added-to-registry"
 	aggregate         = "algorithms"
 	durableID         = "algorithm-repository-durable"
 )
 
 func main() {
-	comp := natsutil.NewStreamingComponent(client_id)
+	cid, _ := uuid.NewV4()
+	clientId := baseClient_id + cid.String()
+	comp := natsutil.NewStreamingComponent(clientId)
 
 	err := comp.ConnectToNatsStreamingService(cluster_id, stan.NatsURL(stan.DefaultNatsURL))
 	if err != nil {
