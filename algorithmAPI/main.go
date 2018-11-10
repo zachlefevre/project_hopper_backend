@@ -30,30 +30,28 @@ func main() {
 		log.Fatal(err)
 	}
 }
-
 func initRoutes() *mux.Router {
 	router := mux.NewRouter()
 	router.HandleFunc("/api/algorithms", createAlgorithm).Methods("POST")
 	router.HandleFunc("/api", version).Methods("GET")
 	return router
 }
-
 func version(w http.ResponseWriter, r *http.Request) {
 	w.Header().Set("Content-Type", "application/html")
 	w.WriteHeader(http.StatusOK)
 	w.Write([]byte("<h1>V0</h1>"))
 }
 func createAlgorithm(w http.ResponseWriter, r *http.Request) {
-	var create_cmd pb.CreateAlgorithmCommand
-	err := json.NewDecoder(r.Body).Decode(&create_cmd)
+	var createCmd pb.CreateAlgorithmCommand
+	err := json.NewDecoder(r.Body).Decode(&createCmd)
 	if err != nil {
 		http.Error(w, "Invalid Algorithm", 500)
 		return
 	}
 	aggregateID, _ := uuid.NewV4()
-	create_cmd.Id = aggregateID.String()
-	create_cmd.CreatedOn = time.Now().Unix()
-	err = createAlgorithmRPC(create_cmd)
+	createCmd.Id = aggregateID.String()
+	createCmd.CreatedOn = time.Now().Unix()
+	err = createAlgorithmRPC(createCmd)
 	if err != nil {
 		log.Print(err)
 		http.Error(w, "Failed to create algorithm", 500)
@@ -61,10 +59,9 @@ func createAlgorithm(w http.ResponseWriter, r *http.Request) {
 	}
 	w.Header().Set("Content-Type", "application/json")
 	w.WriteHeader(http.StatusCreated)
-	j, _ := json.Marshal(create_cmd)
+	j, _ := json.Marshal(createCmd)
 	w.Write(j)
 }
-
 func createAlgorithmRPC(cmd pb.CreateAlgorithmCommand) error {
 	conn, err := grpc.Dial(grpcUri, grpc.WithInsecure())
 	if err != nil {
