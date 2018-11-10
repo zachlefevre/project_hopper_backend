@@ -42,7 +42,7 @@ func version(w http.ResponseWriter, r *http.Request) {
 	w.Write([]byte("<h1>V0</h1>"))
 }
 func createAlgorithm(w http.ResponseWriter, r *http.Request) {
-	var create_cmd pb.AlgorithmCreatedCommand
+	var create_cmd pb.CreateAlgorithmCommand
 	err := json.NewDecoder(r.Body).Decode(&create_cmd)
 	if err != nil {
 		http.Error(w, "Invalid Algorithm", 500)
@@ -63,7 +63,7 @@ func createAlgorithm(w http.ResponseWriter, r *http.Request) {
 	w.Write(j)
 }
 
-func createAlgorithmRPC(cmd pb.AlgorithmCreatedCommand) error {
+func createAlgorithmRPC(cmd pb.CreateAlgorithmCommand) error {
 	conn, err := grpc.Dial(grpcUri, grpc.WithInsecure())
 	if err != nil {
 		log.Fatalf("Unable to Connect: %v", err)

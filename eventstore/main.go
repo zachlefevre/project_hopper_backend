@@ -38,7 +38,7 @@ func main() {
 	}
 
 	s := grpc.NewServer()
-	log.Printf("Event store listening on port:", port)
+	log.Println("Event store listening on port:", port)
 	pb.RegisterEventStoreServer(s, &Server{
 		StreamingComponent: comp,
 	})

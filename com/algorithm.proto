@@ -1,19 +1,26 @@
 syntax = 'proto3';
 package pb;
 
-message AlgorithmCreatedCommand{
+message Algorithm{
     string name = 1;
     string version = 2;
-    string id = 3;
-    int64 createdOn = 4;
+}
+message CreateAlgorithmCommand{
+    Algorithm algorithm = 1;
+    int64 createdOn = 2;
     
     message algorithmFile {
         string fileType = 1;
         string fileName = 2;
     }
-    repeated algorithmFile files = 5;
+    repeated algorithmFile files = 3;
+    string id = 4;
 }
 
-message AlgorithmAssociatedWithDSCommand{
-        
+message AlgorithmCreatedCommand{
+    Algorithm algorithm = 1;
+    string id = 2;
+}
+
+message AlgorithmAssociatedWithDSCommand{       
 }
