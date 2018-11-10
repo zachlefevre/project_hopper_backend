@@ -4,6 +4,7 @@ package pb;
 message Algorithm{
     string name = 1;
     string version = 2;
+    string id = 3;
 }
 message CreateAlgorithmCommand{
     Algorithm algorithm = 1;
