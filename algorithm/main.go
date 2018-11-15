@@ -46,7 +46,9 @@ func (a *AlgoServer) CreateAlgorithm(ctx context.Context, cmd *pb.CreateAlgorith
 		EventData:     string(cmdJSON),
 		Channel:       createAlgorithmChannel,
 	}
+	log.Println("generating new client")
 	client := pb.NewEventStoreClient(conn)
+	log.Println("sending event")
 	response, err := client.CreateEvent(ctx, event)
 	if err != nil {
 		return nil, errors.Wrap(err, "Failed to add to event store")
