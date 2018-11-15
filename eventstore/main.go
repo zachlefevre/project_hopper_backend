@@ -35,8 +35,8 @@ func main() {
 	}
 
 	cid, _ := uuid.NewV4()
-	clientId := baseClientID + cid.String()
-	comp := natsutil.NewStreamingComponent(clientId)
+	clientID := baseClientID + cid.String()
+	comp := natsutil.NewStreamingComponent(clientID)
 
 	err = comp.ConnectToNatsStreamingService(clusterID, stan.NatsURL(natsUrl), stan.ConnectWait(100*time.Second))
 	if err != nil {

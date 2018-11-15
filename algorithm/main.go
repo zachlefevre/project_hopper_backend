@@ -19,7 +19,7 @@ import (
 const (
 	port                   = ":50051"
 	clusterID              = "test-cluster"
-	eventStoreURI          = "eventstore:50051"
+	eventStoreURI          = "store:50051"
 	createAlgorithmChannel = "create-algorithm"
 	aggregate              = "Algorithm"
 )
@@ -50,6 +50,7 @@ func (a *AlgoServer) CreateAlgorithm(ctx context.Context, cmd *pb.CreateAlgorith
 	client := pb.NewEventStoreClient(conn)
 	log.Println("sending event")
 	response, err := client.CreateEvent(ctx, event)
+
 	if err != nil {
 		return nil, errors.Wrap(err, "Failed to add to event store")
 	}
