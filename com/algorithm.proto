@@ -3,25 +3,32 @@ package pb;
 
 service AlgorithmAggregate{
     rpc CreateAlgorithm(CreateAlgorithmCommand) returns (Algorithm){}
+    rpc GetAlgorithm(ID) returns (Algorithm) {}
 }
+
+message ID {
+    string id = 1;
+}
+message AlgorithmFile {
+    string fileType = 1;
+    string fileName = 2;
+    string id = 3;
+}   
 
 message Algorithm{
     string name = 1;
     string version = 2;
     string id = 3;
+    string status = 4; 
+    repeated AlgorithmFile files = 5;
+    
 }
 
 //Commands
 message CreateAlgorithmCommand{
     Algorithm algorithm = 1;
     int64 createdOn = 2;
-    
-    message algorithmFile {
-        string fileType = 1;
-        string fileName = 2;
-    }
-    repeated algorithmFile files = 3;
-    string id = 4;
+    string id = 3;
 }
 
 message AssociateAlgorithmWithDatasetCommand{       

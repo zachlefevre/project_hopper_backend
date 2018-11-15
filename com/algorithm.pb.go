@@ -22,20 +22,116 @@ var _ = math.Inf
 // proto package needs to be updated.
 const _ = proto.ProtoPackageIsVersion2 // please upgrade the proto package
 
-type Algorithm struct {
-	Name                 string   `protobuf:"bytes,1,opt,name=name,proto3" json:"name,omitempty"`
-	Version              string   `protobuf:"bytes,2,opt,name=version,proto3" json:"version,omitempty"`
+type ID struct {
+	Id                   string   `protobuf:"bytes,1,opt,name=id,proto3" json:"id,omitempty"`
+	XXX_NoUnkeyedLiteral struct{} `json:"-"`
+	XXX_unrecognized     []byte   `json:"-"`
+	XXX_sizecache        int32    `json:"-"`
+}
+
+func (m *ID) Reset()         { *m = ID{} }
+func (m *ID) String() string { return proto.CompactTextString(m) }
+func (*ID) ProtoMessage()    {}
+func (*ID) Descriptor() ([]byte, []int) {
+	return fileDescriptor_8c381a4f1e580eed, []int{0}
+}
+
+func (m *ID) XXX_Unmarshal(b []byte) error {
+	return xxx_messageInfo_ID.Unmarshal(m, b)
+}
+func (m *ID) XXX_Marshal(b []byte, deterministic bool) ([]byte, error) {
+	return xxx_messageInfo_ID.Marshal(b, m, deterministic)
+}
+func (m *ID) XXX_Merge(src proto.Message) {
+	xxx_messageInfo_ID.Merge(m, src)
+}
+func (m *ID) XXX_Size() int {
+	return xxx_messageInfo_ID.Size(m)
+}
+func (m *ID) XXX_DiscardUnknown() {
+	xxx_messageInfo_ID.DiscardUnknown(m)
+}
+
+var xxx_messageInfo_ID proto.InternalMessageInfo
+
+func (m *ID) GetId() string {
+	if m != nil {
+		return m.Id
+	}
+	return ""
+}
+
+type AlgorithmFile struct {
+	FileType             string   `protobuf:"bytes,1,opt,name=fileType,proto3" json:"fileType,omitempty"`
+	FileName             string   `protobuf:"bytes,2,opt,name=fileName,proto3" json:"fileName,omitempty"`
 	Id                   string   `protobuf:"bytes,3,opt,name=id,proto3" json:"id,omitempty"`
 	XXX_NoUnkeyedLiteral struct{} `json:"-"`
 	XXX_unrecognized     []byte   `json:"-"`
 	XXX_sizecache        int32    `json:"-"`
 }
 
+func (m *AlgorithmFile) Reset()         { *m = AlgorithmFile{} }
+func (m *AlgorithmFile) String() string { return proto.CompactTextString(m) }
+func (*AlgorithmFile) ProtoMessage()    {}
+func (*AlgorithmFile) Descriptor() ([]byte, []int) {
+	return fileDescriptor_8c381a4f1e580eed, []int{1}
+}
+
+func (m *AlgorithmFile) XXX_Unmarshal(b []byte) error {
+	return xxx_messageInfo_AlgorithmFile.Unmarshal(m, b)
+}
+func (m *AlgorithmFile) XXX_Marshal(b []byte, deterministic bool) ([]byte, error) {
+	return xxx_messageInfo_AlgorithmFile.Marshal(b, m, deterministic)
+}
+func (m *AlgorithmFile) XXX_Merge(src proto.Message) {
+	xxx_messageInfo_AlgorithmFile.Merge(m, src)
+}
+func (m *AlgorithmFile) XXX_Size() int {
+	return xxx_messageInfo_AlgorithmFile.Size(m)
+}
+func (m *AlgorithmFile) XXX_DiscardUnknown() {
+	xxx_messageInfo_AlgorithmFile.DiscardUnknown(m)
+}
+
+var xxx_messageInfo_AlgorithmFile proto.InternalMessageInfo
+
+func (m *AlgorithmFile) GetFileType() string {
+	if m != nil {
+		return m.FileType
+	}
+	return ""
+}
+
+func (m *AlgorithmFile) GetFileName() string {
+	if m != nil {
+		return m.FileName
+	}
+	return ""
+}
+
+func (m *AlgorithmFile) GetId() string {
+	if m != nil {
+		return m.Id
+	}
+	return ""
+}
+
+type Algorithm struct {
+	Name                 string           `protobuf:"bytes,1,opt,name=name,proto3" json:"name,omitempty"`
+	Version              string           `protobuf:"bytes,2,opt,name=version,proto3" json:"version,omitempty"`
+	Id                   string           `protobuf:"bytes,3,opt,name=id,proto3" json:"id,omitempty"`
+	Status               string           `protobuf:"bytes,4,opt,name=status,proto3" json:"status,omitempty"`
+	Files                []*AlgorithmFile `protobuf:"bytes,5,rep,name=files,proto3" json:"files,omitempty"`
+	XXX_NoUnkeyedLiteral struct{}         `json:"-"`
+	XXX_unrecognized     []byte           `json:"-"`
+	XXX_sizecache        int32            `json:"-"`
+}
+
 func (m *Algorithm) Reset()         { *m = Algorithm{} }
 func (m *Algorithm) String() string { return proto.CompactTextString(m) }
 func (*Algorithm) ProtoMessage()    {}
 func (*Algorithm) Descriptor() ([]byte, []int) {
-	return fileDescriptor_8c381a4f1e580eed, []int{0}
+	return fileDescriptor_8c381a4f1e580eed, []int{2}
 }
 
 func (m *Algorithm) XXX_Unmarshal(b []byte) error {
@@ -77,22 +173,35 @@ func (m *Algorithm) GetId() string {
 	return ""
 }
 
+func (m *Algorithm) GetStatus() string {
+	if m != nil {
+		return m.Status
+	}
+	return ""
+}
+
+func (m *Algorithm) GetFiles() []*AlgorithmFile {
+	if m != nil {
+		return m.Files
+	}
+	return nil
+}
+
 // Commands
 type CreateAlgorithmCommand struct {
-	Algorithm            *Algorithm                             `protobuf:"bytes,1,opt,name=algorithm,proto3" json:"algorithm,omitempty"`
-	CreatedOn            int64                                  `protobuf:"varint,2,opt,name=createdOn,proto3" json:"createdOn,omitempty"`
-	Files                []*CreateAlgorithmCommandAlgorithmFile `protobuf:"bytes,3,rep,name=files,proto3" json:"files,omitempty"`
-	Id                   string                                 `protobuf:"bytes,4,opt,name=id,proto3" json:"id,omitempty"`
-	XXX_NoUnkeyedLiteral struct{}                               `json:"-"`
-	XXX_unrecognized     []byte                                 `json:"-"`
-	XXX_sizecache        int32                                  `json:"-"`
+	Algorithm            *Algorithm `protobuf:"bytes,1,opt,name=algorithm,proto3" json:"algorithm,omitempty"`
+	CreatedOn            int64      `protobuf:"varint,2,opt,name=createdOn,proto3" json:"createdOn,omitempty"`
+	Id                   string     `protobuf:"bytes,3,opt,name=id,proto3" json:"id,omitempty"`
+	XXX_NoUnkeyedLiteral struct{}   `json:"-"`
+	XXX_unrecognized     []byte     `json:"-"`
+	XXX_sizecache        int32      `json:"-"`
 }
 
 func (m *CreateAlgorithmCommand) Reset()         { *m = CreateAlgorithmCommand{} }
 func (m *CreateAlgorithmCommand) String() string { return proto.CompactTextString(m) }
 func (*CreateAlgorithmCommand) ProtoMessage()    {}
 func (*CreateAlgorithmCommand) Descriptor() ([]byte, []int) {
-	return fileDescriptor_8c381a4f1e580eed, []int{1}
+	return fileDescriptor_8c381a4f1e580eed, []int{3}
 }
 
 func (m *CreateAlgorithmCommand) XXX_Unmarshal(b []byte) error {
@@ -127,63 +236,9 @@ func (m *CreateAlgorithmCommand) GetCreatedOn() int64 {
 	return 0
 }
 
-func (m *CreateAlgorithmCommand) GetFiles() []*CreateAlgorithmCommandAlgorithmFile {
-	if m != nil {
-		return m.Files
-	}
-	return nil
-}
-
 func (m *CreateAlgorithmCommand) GetId() string {
 	if m != nil {
 		return m.Id
-	}
-	return ""
-}
-
-type CreateAlgorithmCommandAlgorithmFile struct {
-	FileType             string   `protobuf:"bytes,1,opt,name=fileType,proto3" json:"fileType,omitempty"`
-	FileName             string   `protobuf:"bytes,2,opt,name=fileName,proto3" json:"fileName,omitempty"`
-	XXX_NoUnkeyedLiteral struct{} `json:"-"`
-	XXX_unrecognized     []byte   `json:"-"`
-	XXX_sizecache        int32    `json:"-"`
-}
-
-func (m *CreateAlgorithmCommandAlgorithmFile) Reset()         { *m = CreateAlgorithmCommandAlgorithmFile{} }
-func (m *CreateAlgorithmCommandAlgorithmFile) String() string { return proto.CompactTextString(m) }
-func (*CreateAlgorithmCommandAlgorithmFile) ProtoMessage()    {}
-func (*CreateAlgorithmCommandAlgorithmFile) Descriptor() ([]byte, []int) {
-	return fileDescriptor_8c381a4f1e580eed, []int{1, 0}
-}
-
-func (m *CreateAlgorithmCommandAlgorithmFile) XXX_Unmarshal(b []byte) error {
-	return xxx_messageInfo_CreateAlgorithmCommandAlgorithmFile.Unmarshal(m, b)
-}
-func (m *CreateAlgorithmCommandAlgorithmFile) XXX_Marshal(b []byte, deterministic bool) ([]byte, error) {
-	return xxx_messageInfo_CreateAlgorithmCommandAlgorithmFile.Marshal(b, m, deterministic)
-}
-func (m *CreateAlgorithmCommandAlgorithmFile) XXX_Merge(src proto.Message) {
-	xxx_messageInfo_CreateAlgorithmCommandAlgorithmFile.Merge(m, src)
-}
-func (m *CreateAlgorithmCommandAlgorithmFile) XXX_Size() int {
-	return xxx_messageInfo_CreateAlgorithmCommandAlgorithmFile.Size(m)
-}
-func (m *CreateAlgorithmCommandAlgorithmFile) XXX_DiscardUnknown() {
-	xxx_messageInfo_CreateAlgorithmCommandAlgorithmFile.DiscardUnknown(m)
-}
-
-var xxx_messageInfo_CreateAlgorithmCommandAlgorithmFile proto.InternalMessageInfo
-
-func (m *CreateAlgorithmCommandAlgorithmFile) GetFileType() string {
-	if m != nil {
-		return m.FileType
-	}
-	return ""
-}
-
-func (m *CreateAlgorithmCommandAlgorithmFile) GetFileName() string {
-	if m != nil {
-		return m.FileName
 	}
 	return ""
 }
@@ -198,7 +253,7 @@ func (m *AssociateAlgorithmWithDatasetCommand) Reset()         { *m = AssociateA
 func (m *AssociateAlgorithmWithDatasetCommand) String() string { return proto.CompactTextString(m) }
 func (*AssociateAlgorithmWithDatasetCommand) ProtoMessage()    {}
 func (*AssociateAlgorithmWithDatasetCommand) Descriptor() ([]byte, []int) {
-	return fileDescriptor_8c381a4f1e580eed, []int{2}
+	return fileDescriptor_8c381a4f1e580eed, []int{4}
 }
 
 func (m *AssociateAlgorithmWithDatasetCommand) XXX_Unmarshal(b []byte) error {
@@ -232,7 +287,7 @@ func (m *AlgorithmCreatedEvent) Reset()         { *m = AlgorithmCreatedEvent{} }
 func (m *AlgorithmCreatedEvent) String() string { return proto.CompactTextString(m) }
 func (*AlgorithmCreatedEvent) ProtoMessage()    {}
 func (*AlgorithmCreatedEvent) Descriptor() ([]byte, []int) {
-	return fileDescriptor_8c381a4f1e580eed, []int{3}
+	return fileDescriptor_8c381a4f1e580eed, []int{5}
 }
 
 func (m *AlgorithmCreatedEvent) XXX_Unmarshal(b []byte) error {
@@ -279,7 +334,7 @@ func (m *AlgorithmAssociatedWithDatasetEvent) Reset()         { *m = AlgorithmAs
 func (m *AlgorithmAssociatedWithDatasetEvent) String() string { return proto.CompactTextString(m) }
 func (*AlgorithmAssociatedWithDatasetEvent) ProtoMessage()    {}
 func (*AlgorithmAssociatedWithDatasetEvent) Descriptor() ([]byte, []int) {
-	return fileDescriptor_8c381a4f1e580eed, []int{4}
+	return fileDescriptor_8c381a4f1e580eed, []int{6}
 }
 
 func (m *AlgorithmAssociatedWithDatasetEvent) XXX_Unmarshal(b []byte) error {
@@ -315,9 +370,10 @@ func (m *AlgorithmAssociatedWithDatasetEvent) GetId() string {
 }
 
 func init() {
+	proto.RegisterType((*ID)(nil), "pb.ID")
+	proto.RegisterType((*AlgorithmFile)(nil), "pb.AlgorithmFile")
 	proto.RegisterType((*Algorithm)(nil), "pb.Algorithm")
 	proto.RegisterType((*CreateAlgorithmCommand)(nil), "pb.CreateAlgorithmCommand")
-	proto.RegisterType((*CreateAlgorithmCommandAlgorithmFile)(nil), "pb.CreateAlgorithmCommand.algorithmFile")
 	proto.RegisterType((*AssociateAlgorithmWithDatasetCommand)(nil), "pb.AssociateAlgorithmWithDatasetCommand")
 	proto.RegisterType((*AlgorithmCreatedEvent)(nil), "pb.AlgorithmCreatedEvent")
 	proto.RegisterType((*AlgorithmAssociatedWithDatasetEvent)(nil), "pb.AlgorithmAssociatedWithDatasetEvent")
@@ -326,27 +382,29 @@ func init() {
 func init() { proto.RegisterFile("algorithm.proto", fileDescriptor_8c381a4f1e580eed) }
 
 var fileDescriptor_8c381a4f1e580eed = []byte{
-	// 309 bytes of a gzipped FileDescriptorProto
-	0x1f, 0x8b, 0x08, 0x00, 0x00, 0x00, 0x00, 0x00, 0x02, 0xff, 0x9c, 0x52, 0x4d, 0x6b, 0x83, 0x40,
-	0x14, 0xac, 0x6b, 0xfa, 0xe1, 0x0b, 0x69, 0xe0, 0x41, 0x8b, 0x48, 0x0f, 0xc1, 0x96, 0x22, 0x14,
-	0x3c, 0xd8, 0x7b, 0x20, 0xa4, 0x1f, 0xf4, 0xd2, 0x82, 0x08, 0x3d, 0xaf, 0x71, 0x6b, 0x16, 0xd4,
-	0x15, 0x5d, 0x02, 0xfd, 0xef, 0x3d, 0x14, 0xd7, 0xb8, 0x9b, 0x94, 0xf6, 0xd0, 0xdc, 0x7c, 0xf3,
-	0xc6, 0x99, 0xd9, 0xd9, 0x85, 0x29, 0x2d, 0x72, 0xd1, 0x70, 0xb9, 0x2e, 0xc3, 0xba, 0x11, 0x52,
-	0x20, 0xa9, 0x53, 0xff, 0x05, 0x9c, 0xc5, 0x00, 0x23, 0xc2, 0xa8, 0xa2, 0x25, 0x73, 0xad, 0x99,
-	0x15, 0x38, 0xb1, 0xfa, 0x46, 0x17, 0x4e, 0x37, 0xac, 0x69, 0xb9, 0xa8, 0x5c, 0xa2, 0xe0, 0x61,
-	0xc4, 0x73, 0x20, 0x3c, 0x73, 0x6d, 0x05, 0x12, 0x9e, 0xf9, 0x5f, 0x16, 0x5c, 0x2e, 0x1b, 0x46,
-	0x25, 0xd3, 0x8a, 0x4b, 0x51, 0x96, 0xb4, 0xca, 0xf0, 0x0e, 0x1c, 0x6d, 0xae, 0xd4, 0xc7, 0xd1,
-	0x24, 0xac, 0xd3, 0x50, 0x13, 0x63, 0xb3, 0xc7, 0x2b, 0x70, 0x56, 0x4a, 0x26, 0x7b, 0xeb, 0x3d,
-	0xed, 0xd8, 0x00, 0x38, 0x87, 0xe3, 0x0f, 0x5e, 0xb0, 0xd6, 0xb5, 0x67, 0x76, 0x30, 0x8e, 0x82,
-	0x4e, 0xe6, 0x77, 0xd7, 0x50, 0x4b, 0x3e, 0xf1, 0x82, 0xc5, 0xfd, 0x6f, 0xdb, 0xd4, 0xa3, 0x21,
-	0xb5, 0xf7, 0x0c, 0x93, 0x3d, 0x1e, 0x7a, 0x70, 0xd6, 0x31, 0x93, 0xcf, 0x7a, 0x28, 0x42, 0xcf,
-	0xc3, 0xee, 0xb5, 0x2b, 0x89, 0x98, 0x5d, 0x37, 0xfb, 0xb7, 0x70, 0xb3, 0x68, 0x5b, 0xb1, 0xe2,
-	0xbb, 0x51, 0xde, 0xb9, 0x5c, 0x3f, 0x50, 0x49, 0x5b, 0x26, 0xb7, 0xa9, 0xfc, 0x04, 0x2e, 0x4c,
-	0xd2, 0xfe, 0x58, 0x8f, 0x1b, 0x56, 0xc9, 0xff, 0x95, 0xd4, 0x1f, 0x83, 0xe8, 0xf2, 0x53, 0xb8,
-	0xd6, 0x3c, 0x1d, 0x23, 0xdb, 0xb1, 0x3f, 0xd8, 0x43, 0x5f, 0x70, 0x94, 0x00, 0x1a, 0x8f, 0x3c,
-	0x6f, 0x58, 0x4e, 0x25, 0xc3, 0x39, 0x4c, 0x7f, 0xf4, 0x8f, 0xde, 0xdf, 0x97, 0xe2, 0xed, 0xdb,
-	0xf9, 0x47, 0xe9, 0x89, 0x7a, 0x8c, 0xf7, 0xdf, 0x01, 0x00, 0x00, 0xff, 0xff, 0x66, 0x7d, 0x4e,
-	0xbb, 0x9f, 0x02, 0x00, 0x00,
+	// 341 bytes of a gzipped FileDescriptorProto
+	0x1f, 0x8b, 0x08, 0x00, 0x00, 0x00, 0x00, 0x00, 0x02, 0xff, 0x9c, 0x92, 0x4b, 0x4f, 0xfa, 0x40,
+	0x14, 0xc5, 0xff, 0x94, 0xc7, 0xdf, 0x5e, 0x44, 0xe2, 0x8d, 0x92, 0x86, 0xb8, 0x20, 0xd5, 0x08,
+	0x89, 0x09, 0x0b, 0xdc, 0x9b, 0x10, 0x50, 0xc3, 0x46, 0x93, 0x86, 0x84, 0xf5, 0x94, 0x5e, 0xcb,
+	0x24, 0xb4, 0xd3, 0x74, 0x46, 0x12, 0x17, 0x7e, 0x01, 0x3f, 0xb5, 0xe9, 0x83, 0x19, 0x1e, 0x6e,
+	0x74, 0xc7, 0x9d, 0x73, 0xe6, 0x77, 0xce, 0x5c, 0x0a, 0x6d, 0xb6, 0x0e, 0x45, 0xca, 0xd5, 0x2a,
+	0x1a, 0x26, 0xa9, 0x50, 0x02, 0xad, 0xc4, 0x77, 0x2f, 0xc0, 0x9a, 0x4d, 0xf1, 0x0c, 0x2c, 0x1e,
+	0x38, 0x95, 0x5e, 0x65, 0x60, 0x7b, 0x16, 0x0f, 0xdc, 0x05, 0xb4, 0xc6, 0x5b, 0xf3, 0x13, 0x5f,
+	0x13, 0x76, 0xe1, 0xe4, 0x8d, 0xaf, 0x69, 0xfe, 0x91, 0x50, 0x69, 0xd3, 0xf3, 0x56, 0x7b, 0x61,
+	0x11, 0x39, 0x96, 0xd1, 0xb2, 0xb9, 0x04, 0x57, 0x35, 0xf8, 0xab, 0x02, 0xb6, 0x26, 0x23, 0x42,
+	0x2d, 0xce, 0x6e, 0x15, 0xc4, 0xfc, 0x37, 0x3a, 0xf0, 0x7f, 0x43, 0xa9, 0xe4, 0x22, 0x2e, 0x61,
+	0xdb, 0xf1, 0x90, 0x85, 0x1d, 0x68, 0x48, 0xc5, 0xd4, 0xbb, 0x74, 0x6a, 0xf9, 0x59, 0x39, 0x61,
+	0x1f, 0xea, 0x59, 0xbe, 0x74, 0xea, 0xbd, 0xea, 0xa0, 0x39, 0x3a, 0x1f, 0x26, 0xfe, 0x70, 0xef,
+	0x35, 0x5e, 0xa1, 0xbb, 0x12, 0x3a, 0x93, 0x94, 0x98, 0x22, 0xad, 0x4e, 0x44, 0x14, 0xb1, 0x38,
+	0xc0, 0x3b, 0xb0, 0xf5, 0xb2, 0xf2, 0x76, 0xcd, 0x51, 0x6b, 0x0f, 0xe3, 0x19, 0x1d, 0xaf, 0xc0,
+	0x5e, 0xe6, 0x98, 0xe0, 0xb5, 0xe8, 0x5c, 0xf5, 0xcc, 0xc1, 0xd1, 0x06, 0x6e, 0xe1, 0x66, 0x2c,
+	0xa5, 0x58, 0xf2, 0xdd, 0xdc, 0x05, 0x57, 0xab, 0x29, 0x53, 0x4c, 0x92, 0x2a, 0x2b, 0xb8, 0x73,
+	0xb8, 0x34, 0xb5, 0x0a, 0xda, 0xe3, 0x86, 0x62, 0xf5, 0xbb, 0x6e, 0x45, 0xba, 0xa5, 0xd3, 0x7d,
+	0xb8, 0xd6, 0x3e, 0x5d, 0x23, 0xd8, 0x89, 0xff, 0x73, 0x86, 0x7e, 0xe1, 0xe8, 0x13, 0xd0, 0x64,
+	0x84, 0x61, 0x4a, 0x21, 0x53, 0x84, 0x0f, 0xd0, 0x3e, 0x58, 0x36, 0x76, 0x33, 0xe4, 0xcf, 0xff,
+	0x40, 0x77, 0x3f, 0xce, 0xfd, 0x87, 0x7d, 0x38, 0x7d, 0x26, 0x65, 0x2e, 0x37, 0x32, 0xc3, 0x6c,
+	0x7a, 0x64, 0xf4, 0x1b, 0xf9, 0xc7, 0x7d, 0xff, 0x1d, 0x00, 0x00, 0xff, 0xff, 0xac, 0x1f, 0x47,
+	0xbf, 0xef, 0x02, 0x00, 0x00,
 }
 
 // Reference imports to suppress errors if they are not otherwise used.
@@ -362,6 +420,7 @@ const _ = grpc.SupportPackageIsVersion4
 // For semantics around ctx use and closing/ending streaming RPCs, please refer to https://godoc.org/google.golang.org/grpc#ClientConn.NewStream.
 type AlgorithmAggregateClient interface {
 	CreateAlgorithm(ctx context.Context, in *CreateAlgorithmCommand, opts ...grpc.CallOption) (*Algorithm, error)
+	GetAlgorithm(ctx context.Context, in *ID, opts ...grpc.CallOption) (*Algorithm, error)
 }
 
 type algorithmAggregateClient struct {
@@ -381,9 +440,19 @@ func (c *algorithmAggregateClient) CreateAlgorithm(ctx context.Context, in *Crea
 	return out, nil
 }
 
+func (c *algorithmAggregateClient) GetAlgorithm(ctx context.Context, in *ID, opts ...grpc.CallOption) (*Algorithm, error) {
+	out := new(Algorithm)
+	err := c.cc.Invoke(ctx, "/pb.AlgorithmAggregate/GetAlgorithm", in, out, opts...)
+	if err != nil {
+		return nil, err
+	}
+	return out, nil
+}
+
 // AlgorithmAggregateServer is the server API for AlgorithmAggregate service.
 type AlgorithmAggregateServer interface {
 	CreateAlgorithm(context.Context, *CreateAlgorithmCommand) (*Algorithm, error)
+	GetAlgorithm(context.Context, *ID) (*Algorithm, error)
 }
 
 func RegisterAlgorithmAggregateServer(s *grpc.Server, srv AlgorithmAggregateServer) {
@@ -408,6 +477,24 @@ func _AlgorithmAggregate_CreateAlgorithm_Handler(srv interface{}, ctx context.Co
 	return interceptor(ctx, in, info, handler)
 }
 
+func _AlgorithmAggregate_GetAlgorithm_Handler(srv interface{}, ctx context.Context, dec func(interface{}) error, interceptor grpc.UnaryServerInterceptor) (interface{}, error) {
+	in := new(ID)
+	if err := dec(in); err != nil {
+		return nil, err
+	}
+	if interceptor == nil {
+		return srv.(AlgorithmAggregateServer).GetAlgorithm(ctx, in)
+	}
+	info := &grpc.UnaryServerInfo{
+		Server:     srv,
+		FullMethod: "/pb.AlgorithmAggregate/GetAlgorithm",
+	}
+	handler := func(ctx context.Context, req interface{}) (interface{}, error) {
+		return srv.(AlgorithmAggregateServer).GetAlgorithm(ctx, req.(*ID))
+	}
+	return interceptor(ctx, in, info, handler)
+}
+
 var _AlgorithmAggregate_serviceDesc = grpc.ServiceDesc{
 	ServiceName: "pb.AlgorithmAggregate",
 	HandlerType: (*AlgorithmAggregateServer)(nil),
@@ -415,6 +502,10 @@ var _AlgorithmAggregate_serviceDesc = grpc.ServiceDesc{
 		{
 			MethodName: "CreateAlgorithm",
 			Handler:    _AlgorithmAggregate_CreateAlgorithm_Handler,
+		},
+		{
+			MethodName: "GetAlgorithm",
+			Handler:    _AlgorithmAggregate_GetAlgorithm_Handler,
 		},
 	},
 	Streams:  []grpc.StreamDesc{},
