@@ -1,0 +1,44 @@
+kind: Service
+apiVersion: v1
+metadata:
+  name: algorithm-api
+spec:
+  selector:
+    app: algorithm-api
+  ports:
+  - port: 3000
+    nodePort: 30080
+  type: NodePort
+---
+kind: Service
+apiVersion: v1
+metadata:
+  name: algorithm-aggregate
+spec:
+  selector:
+    app: algorithm-aggregate
+  ports:
+  - port: 50051
+    targetPort: 50051
+---
+kind: Service
+apiVersion: v1
+metadata:
+  name: eventstore
+spec:
+  selector:
+    app: eventstore
+  ports:
+  - port: 50051
+    targetPort: 50051
+---
+kind: Service
+apiVersion: v1
+metadata:
+  name: nats
+spec:
+  selector:
+    app: nats
+  ports:
+  - port: 4222
+    targetPort: 4222

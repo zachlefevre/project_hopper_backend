@@ -1,0 +1,77 @@
+apiVersion: apps/v1
+kind: Deployment
+metadata:
+  name: algorithm-api
+spec:
+  selector:
+    matchLabels:
+      app: algorithm-api
+  template:
+    metadata:
+      labels:
+        app: algorithm-api
+    spec:
+      containers:
+      - name: algorithm-api
+        image: frlnbrg/project_hopper_algorithm_api
+        ports:
+        - containerPort: 3000
+
+---
+apiVersion: apps/v1
+kind: Deployment
+metadata:
+  name: algorithm-aggregate
+spec:
+  selector:
+    matchLabels:
+      app: algorithm-aggregate
+  template:
+    metadata:
+      labels:
+        app: algorithm-aggregate
+    spec:
+      containers:
+      - name: algorithm-aggregate
+        image: frlnbrg/project_hopper_algorithm_aggregate
+        ports:
+        - containerPort: 50051
+---
+apiVersion: apps/v1
+kind: Deployment
+metadata:
+  name: eventstore
+spec:
+  selector:
+    matchLabels:
+      app: eventstore
+  template:
+    metadata:
+      labels:
+        app: eventstore
+    spec:
+      containers:
+      - name: eventstore
+        image: frlnbrg/project_hopper_event_store   
+        ports:
+        - containerPort: 50051
+---
+apiVersion: apps/v1
+kind: Deployment
+metadata:
+  name: nats
+spec:
+  selector:
+    matchLabels:
+      app: nats
+  template:
+    metadata:
+      labels:
+        app: nats
+    spec:
+      containers:
+      - name: nats
+        image: nats-streaming
+        ports:
+        - containerPort: 4222
+
