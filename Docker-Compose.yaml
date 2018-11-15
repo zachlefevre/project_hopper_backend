@@ -9,7 +9,7 @@ services:
       context: algorithmAPI
     ports:
       - "3000:3000"
-  algorithmAggregate:
+  algorithm_aggregate:
     build:
       context: algorithm
     ports:
