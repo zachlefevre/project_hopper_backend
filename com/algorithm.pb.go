@@ -6,6 +6,8 @@ package pb
 import (
 	fmt "fmt"
 	proto "github.com/golang/protobuf/proto"
+	context "golang.org/x/net/context"
+	grpc "google.golang.org/grpc"
 	math "math"
 )
 
@@ -75,6 +77,7 @@ func (m *Algorithm) GetId() string {
 	return ""
 }
 
+// Commands
 type CreateAlgorithmCommand struct {
 	Algorithm            *Algorithm                             `protobuf:"bytes,1,opt,name=algorithm,proto3" json:"algorithm,omitempty"`
 	CreatedOn            int64                                  `protobuf:"varint,2,opt,name=createdOn,proto3" json:"createdOn,omitempty"`
@@ -185,7 +188,39 @@ func (m *CreateAlgorithmCommandAlgorithmFile) GetFileName() string {
 	return ""
 }
 
-type AlgorithmCreatedCommand struct {
+type AssociateAlgorithmWithDatasetCommand struct {
+	XXX_NoUnkeyedLiteral struct{} `json:"-"`
+	XXX_unrecognized     []byte   `json:"-"`
+	XXX_sizecache        int32    `json:"-"`
+}
+
+func (m *AssociateAlgorithmWithDatasetCommand) Reset()         { *m = AssociateAlgorithmWithDatasetCommand{} }
+func (m *AssociateAlgorithmWithDatasetCommand) String() string { return proto.CompactTextString(m) }
+func (*AssociateAlgorithmWithDatasetCommand) ProtoMessage()    {}
+func (*AssociateAlgorithmWithDatasetCommand) Descriptor() ([]byte, []int) {
+	return fileDescriptor_8c381a4f1e580eed, []int{2}
+}
+
+func (m *AssociateAlgorithmWithDatasetCommand) XXX_Unmarshal(b []byte) error {
+	return xxx_messageInfo_AssociateAlgorithmWithDatasetCommand.Unmarshal(m, b)
+}
+func (m *AssociateAlgorithmWithDatasetCommand) XXX_Marshal(b []byte, deterministic bool) ([]byte, error) {
+	return xxx_messageInfo_AssociateAlgorithmWithDatasetCommand.Marshal(b, m, deterministic)
+}
+func (m *AssociateAlgorithmWithDatasetCommand) XXX_Merge(src proto.Message) {
+	xxx_messageInfo_AssociateAlgorithmWithDatasetCommand.Merge(m, src)
+}
+func (m *AssociateAlgorithmWithDatasetCommand) XXX_Size() int {
+	return xxx_messageInfo_AssociateAlgorithmWithDatasetCommand.Size(m)
+}
+func (m *AssociateAlgorithmWithDatasetCommand) XXX_DiscardUnknown() {
+	xxx_messageInfo_AssociateAlgorithmWithDatasetCommand.DiscardUnknown(m)
+}
+
+var xxx_messageInfo_AssociateAlgorithmWithDatasetCommand proto.InternalMessageInfo
+
+// Events
+type AlgorithmCreatedEvent struct {
 	Algorithm            *Algorithm `protobuf:"bytes,1,opt,name=algorithm,proto3" json:"algorithm,omitempty"`
 	Id                   string     `protobuf:"bytes,2,opt,name=id,proto3" json:"id,omitempty"`
 	XXX_NoUnkeyedLiteral struct{}   `json:"-"`
@@ -193,103 +228,195 @@ type AlgorithmCreatedCommand struct {
 	XXX_sizecache        int32      `json:"-"`
 }
 
-func (m *AlgorithmCreatedCommand) Reset()         { *m = AlgorithmCreatedCommand{} }
-func (m *AlgorithmCreatedCommand) String() string { return proto.CompactTextString(m) }
-func (*AlgorithmCreatedCommand) ProtoMessage()    {}
-func (*AlgorithmCreatedCommand) Descriptor() ([]byte, []int) {
-	return fileDescriptor_8c381a4f1e580eed, []int{2}
+func (m *AlgorithmCreatedEvent) Reset()         { *m = AlgorithmCreatedEvent{} }
+func (m *AlgorithmCreatedEvent) String() string { return proto.CompactTextString(m) }
+func (*AlgorithmCreatedEvent) ProtoMessage()    {}
+func (*AlgorithmCreatedEvent) Descriptor() ([]byte, []int) {
+	return fileDescriptor_8c381a4f1e580eed, []int{3}
 }
 
-func (m *AlgorithmCreatedCommand) XXX_Unmarshal(b []byte) error {
-	return xxx_messageInfo_AlgorithmCreatedCommand.Unmarshal(m, b)
+func (m *AlgorithmCreatedEvent) XXX_Unmarshal(b []byte) error {
+	return xxx_messageInfo_AlgorithmCreatedEvent.Unmarshal(m, b)
 }
-func (m *AlgorithmCreatedCommand) XXX_Marshal(b []byte, deterministic bool) ([]byte, error) {
-	return xxx_messageInfo_AlgorithmCreatedCommand.Marshal(b, m, deterministic)
+func (m *AlgorithmCreatedEvent) XXX_Marshal(b []byte, deterministic bool) ([]byte, error) {
+	return xxx_messageInfo_AlgorithmCreatedEvent.Marshal(b, m, deterministic)
 }
-func (m *AlgorithmCreatedCommand) XXX_Merge(src proto.Message) {
-	xxx_messageInfo_AlgorithmCreatedCommand.Merge(m, src)
+func (m *AlgorithmCreatedEvent) XXX_Merge(src proto.Message) {
+	xxx_messageInfo_AlgorithmCreatedEvent.Merge(m, src)
 }
-func (m *AlgorithmCreatedCommand) XXX_Size() int {
-	return xxx_messageInfo_AlgorithmCreatedCommand.Size(m)
+func (m *AlgorithmCreatedEvent) XXX_Size() int {
+	return xxx_messageInfo_AlgorithmCreatedEvent.Size(m)
 }
-func (m *AlgorithmCreatedCommand) XXX_DiscardUnknown() {
-	xxx_messageInfo_AlgorithmCreatedCommand.DiscardUnknown(m)
+func (m *AlgorithmCreatedEvent) XXX_DiscardUnknown() {
+	xxx_messageInfo_AlgorithmCreatedEvent.DiscardUnknown(m)
 }
 
-var xxx_messageInfo_AlgorithmCreatedCommand proto.InternalMessageInfo
+var xxx_messageInfo_AlgorithmCreatedEvent proto.InternalMessageInfo
 
-func (m *AlgorithmCreatedCommand) GetAlgorithm() *Algorithm {
+func (m *AlgorithmCreatedEvent) GetAlgorithm() *Algorithm {
 	if m != nil {
 		return m.Algorithm
 	}
 	return nil
 }
 
-func (m *AlgorithmCreatedCommand) GetId() string {
+func (m *AlgorithmCreatedEvent) GetId() string {
 	if m != nil {
 		return m.Id
 	}
 	return ""
 }
 
-type AlgorithmAssociatedWithDSCommand struct {
-	XXX_NoUnkeyedLiteral struct{} `json:"-"`
-	XXX_unrecognized     []byte   `json:"-"`
-	XXX_sizecache        int32    `json:"-"`
+type AlgorithmAssociatedWithDatasetEvent struct {
+	Algorithm            *Algorithm `protobuf:"bytes,1,opt,name=algorithm,proto3" json:"algorithm,omitempty"`
+	Id                   string     `protobuf:"bytes,3,opt,name=id,proto3" json:"id,omitempty"`
+	XXX_NoUnkeyedLiteral struct{}   `json:"-"`
+	XXX_unrecognized     []byte     `json:"-"`
+	XXX_sizecache        int32      `json:"-"`
 }
 
-func (m *AlgorithmAssociatedWithDSCommand) Reset()         { *m = AlgorithmAssociatedWithDSCommand{} }
-func (m *AlgorithmAssociatedWithDSCommand) String() string { return proto.CompactTextString(m) }
-func (*AlgorithmAssociatedWithDSCommand) ProtoMessage()    {}
-func (*AlgorithmAssociatedWithDSCommand) Descriptor() ([]byte, []int) {
-	return fileDescriptor_8c381a4f1e580eed, []int{3}
+func (m *AlgorithmAssociatedWithDatasetEvent) Reset()         { *m = AlgorithmAssociatedWithDatasetEvent{} }
+func (m *AlgorithmAssociatedWithDatasetEvent) String() string { return proto.CompactTextString(m) }
+func (*AlgorithmAssociatedWithDatasetEvent) ProtoMessage()    {}
+func (*AlgorithmAssociatedWithDatasetEvent) Descriptor() ([]byte, []int) {
+	return fileDescriptor_8c381a4f1e580eed, []int{4}
 }
 
-func (m *AlgorithmAssociatedWithDSCommand) XXX_Unmarshal(b []byte) error {
-	return xxx_messageInfo_AlgorithmAssociatedWithDSCommand.Unmarshal(m, b)
+func (m *AlgorithmAssociatedWithDatasetEvent) XXX_Unmarshal(b []byte) error {
+	return xxx_messageInfo_AlgorithmAssociatedWithDatasetEvent.Unmarshal(m, b)
 }
-func (m *AlgorithmAssociatedWithDSCommand) XXX_Marshal(b []byte, deterministic bool) ([]byte, error) {
-	return xxx_messageInfo_AlgorithmAssociatedWithDSCommand.Marshal(b, m, deterministic)
+func (m *AlgorithmAssociatedWithDatasetEvent) XXX_Marshal(b []byte, deterministic bool) ([]byte, error) {
+	return xxx_messageInfo_AlgorithmAssociatedWithDatasetEvent.Marshal(b, m, deterministic)
 }
-func (m *AlgorithmAssociatedWithDSCommand) XXX_Merge(src proto.Message) {
-	xxx_messageInfo_AlgorithmAssociatedWithDSCommand.Merge(m, src)
+func (m *AlgorithmAssociatedWithDatasetEvent) XXX_Merge(src proto.Message) {
+	xxx_messageInfo_AlgorithmAssociatedWithDatasetEvent.Merge(m, src)
 }
-func (m *AlgorithmAssociatedWithDSCommand) XXX_Size() int {
-	return xxx_messageInfo_AlgorithmAssociatedWithDSCommand.Size(m)
+func (m *AlgorithmAssociatedWithDatasetEvent) XXX_Size() int {
+	return xxx_messageInfo_AlgorithmAssociatedWithDatasetEvent.Size(m)
 }
-func (m *AlgorithmAssociatedWithDSCommand) XXX_DiscardUnknown() {
-	xxx_messageInfo_AlgorithmAssociatedWithDSCommand.DiscardUnknown(m)
+func (m *AlgorithmAssociatedWithDatasetEvent) XXX_DiscardUnknown() {
+	xxx_messageInfo_AlgorithmAssociatedWithDatasetEvent.DiscardUnknown(m)
 }
 
-var xxx_messageInfo_AlgorithmAssociatedWithDSCommand proto.InternalMessageInfo
+var xxx_messageInfo_AlgorithmAssociatedWithDatasetEvent proto.InternalMessageInfo
+
+func (m *AlgorithmAssociatedWithDatasetEvent) GetAlgorithm() *Algorithm {
+	if m != nil {
+		return m.Algorithm
+	}
+	return nil
+}
+
+func (m *AlgorithmAssociatedWithDatasetEvent) GetId() string {
+	if m != nil {
+		return m.Id
+	}
+	return ""
+}
 
 func init() {
 	proto.RegisterType((*Algorithm)(nil), "pb.Algorithm")
 	proto.RegisterType((*CreateAlgorithmCommand)(nil), "pb.CreateAlgorithmCommand")
 	proto.RegisterType((*CreateAlgorithmCommandAlgorithmFile)(nil), "pb.CreateAlgorithmCommand.algorithmFile")
-	proto.RegisterType((*AlgorithmCreatedCommand)(nil), "pb.AlgorithmCreatedCommand")
-	proto.RegisterType((*AlgorithmAssociatedWithDSCommand)(nil), "pb.AlgorithmAssociatedWithDSCommand")
+	proto.RegisterType((*AssociateAlgorithmWithDatasetCommand)(nil), "pb.AssociateAlgorithmWithDatasetCommand")
+	proto.RegisterType((*AlgorithmCreatedEvent)(nil), "pb.AlgorithmCreatedEvent")
+	proto.RegisterType((*AlgorithmAssociatedWithDatasetEvent)(nil), "pb.AlgorithmAssociatedWithDatasetEvent")
 }
 
 func init() { proto.RegisterFile("algorithm.proto", fileDescriptor_8c381a4f1e580eed) }
 
 var fileDescriptor_8c381a4f1e580eed = []byte{
-	// 262 bytes of a gzipped FileDescriptorProto
-	0x1f, 0x8b, 0x08, 0x00, 0x00, 0x00, 0x00, 0x00, 0x02, 0xff, 0x9c, 0x51, 0x4d, 0x4b, 0xc4, 0x30,
-	0x14, 0xa4, 0xe9, 0xfa, 0xd1, 0xb7, 0xac, 0xc2, 0x3b, 0x68, 0x58, 0x3c, 0x94, 0x9e, 0x0a, 0x42,
-	0x0f, 0xeb, 0x5d, 0x58, 0x56, 0x14, 0x2f, 0x0a, 0x55, 0xf4, 0xdc, 0x6e, 0xa3, 0xfb, 0xa0, 0x6d,
-	0x4a, 0x1b, 0x04, 0xff, 0xbb, 0x07, 0x49, 0xb2, 0x49, 0x10, 0x3c, 0xed, 0x2d, 0x6f, 0xde, 0x64,
-	0x66, 0x32, 0x81, 0xf3, 0xaa, 0xfd, 0x94, 0x23, 0xa9, 0x5d, 0x57, 0x0c, 0xa3, 0x54, 0x12, 0xd9,
-	0x50, 0x67, 0x8f, 0x90, 0xac, 0x1d, 0x8c, 0x08, 0xb3, 0xbe, 0xea, 0x04, 0x8f, 0xd2, 0x28, 0x4f,
-	0x4a, 0x73, 0x46, 0x0e, 0x27, 0x5f, 0x62, 0x9c, 0x48, 0xf6, 0x9c, 0x19, 0xd8, 0x8d, 0x78, 0x06,
-	0x8c, 0x1a, 0x1e, 0x1b, 0x90, 0x51, 0x93, 0xfd, 0x44, 0x70, 0xb1, 0x19, 0x45, 0xa5, 0x84, 0x57,
-	0xdc, 0xc8, 0xae, 0xab, 0xfa, 0x06, 0xaf, 0x21, 0xf1, 0xe6, 0x46, 0x7d, 0xbe, 0x5a, 0x14, 0x43,
-	0x5d, 0x78, 0x62, 0x19, 0xf6, 0x78, 0x05, 0xc9, 0xd6, 0xc8, 0x34, 0xcf, 0xd6, 0x33, 0x2e, 0x03,
-	0x80, 0xb7, 0x70, 0xf4, 0x41, 0xad, 0x98, 0x78, 0x9c, 0xc6, 0xf9, 0x7c, 0x95, 0x6b, 0x99, 0xff,
-	0x5d, 0x0b, 0x2f, 0x79, 0x4f, 0xad, 0x28, 0xed, 0xb5, 0x7d, 0xea, 0x99, 0x4b, 0xbd, 0x7c, 0x80,
-	0xc5, 0x1f, 0x1e, 0x2e, 0xe1, 0x54, 0x33, 0x5f, 0xbf, 0x07, 0x57, 0x84, 0x9f, 0xdd, 0xee, 0x49,
-	0x97, 0xc4, 0xc2, 0x4e, 0xcf, 0xd9, 0x1b, 0x5c, 0x86, 0x04, 0x36, 0xee, 0x41, 0xcf, 0xb7, 0x01,
-	0x99, 0xaf, 0x35, 0x83, 0xd4, 0xf3, 0xd6, 0xd3, 0x24, 0xb7, 0xa4, 0xa5, 0xdf, 0x49, 0xed, 0xee,
-	0x5e, 0xf6, 0x06, 0xf5, 0xb1, 0xf9, 0xd0, 0x9b, 0xdf, 0x00, 0x00, 0x00, 0xff, 0xff, 0x9c, 0x25,
-	0xb5, 0xce, 0xe3, 0x01, 0x00, 0x00,
+	// 309 bytes of a gzipped FileDescriptorProto
+	0x1f, 0x8b, 0x08, 0x00, 0x00, 0x00, 0x00, 0x00, 0x02, 0xff, 0x9c, 0x52, 0x4d, 0x6b, 0x83, 0x40,
+	0x14, 0xac, 0x6b, 0xfa, 0xe1, 0x0b, 0x69, 0xe0, 0x41, 0x8b, 0x48, 0x0f, 0xc1, 0x96, 0x22, 0x14,
+	0x3c, 0xd8, 0x7b, 0x20, 0xa4, 0x1f, 0xf4, 0xd2, 0x82, 0x08, 0x3d, 0xaf, 0x71, 0x6b, 0x16, 0xd4,
+	0x15, 0x5d, 0x02, 0xfd, 0xef, 0x3d, 0x14, 0xd7, 0xb8, 0x9b, 0x94, 0xf6, 0xd0, 0xdc, 0x7c, 0xf3,
+	0xc6, 0x99, 0xd9, 0xd9, 0x85, 0x29, 0x2d, 0x72, 0xd1, 0x70, 0xb9, 0x2e, 0xc3, 0xba, 0x11, 0x52,
+	0x20, 0xa9, 0x53, 0xff, 0x05, 0x9c, 0xc5, 0x00, 0x23, 0xc2, 0xa8, 0xa2, 0x25, 0x73, 0xad, 0x99,
+	0x15, 0x38, 0xb1, 0xfa, 0x46, 0x17, 0x4e, 0x37, 0xac, 0x69, 0xb9, 0xa8, 0x5c, 0xa2, 0xe0, 0x61,
+	0xc4, 0x73, 0x20, 0x3c, 0x73, 0x6d, 0x05, 0x12, 0x9e, 0xf9, 0x5f, 0x16, 0x5c, 0x2e, 0x1b, 0x46,
+	0x25, 0xd3, 0x8a, 0x4b, 0x51, 0x96, 0xb4, 0xca, 0xf0, 0x0e, 0x1c, 0x6d, 0xae, 0xd4, 0xc7, 0xd1,
+	0x24, 0xac, 0xd3, 0x50, 0x13, 0x63, 0xb3, 0xc7, 0x2b, 0x70, 0x56, 0x4a, 0x26, 0x7b, 0xeb, 0x3d,
+	0xed, 0xd8, 0x00, 0x38, 0x87, 0xe3, 0x0f, 0x5e, 0xb0, 0xd6, 0xb5, 0x67, 0x76, 0x30, 0x8e, 0x82,
+	0x4e, 0xe6, 0x77, 0xd7, 0x50, 0x4b, 0x3e, 0xf1, 0x82, 0xc5, 0xfd, 0x6f, 0xdb, 0xd4, 0xa3, 0x21,
+	0xb5, 0xf7, 0x0c, 0x93, 0x3d, 0x1e, 0x7a, 0x70, 0xd6, 0x31, 0x93, 0xcf, 0x7a, 0x28, 0x42, 0xcf,
+	0xc3, 0xee, 0xb5, 0x2b, 0x89, 0x98, 0x5d, 0x37, 0xfb, 0xb7, 0x70, 0xb3, 0x68, 0x5b, 0xb1, 0xe2,
+	0xbb, 0x51, 0xde, 0xb9, 0x5c, 0x3f, 0x50, 0x49, 0x5b, 0x26, 0xb7, 0xa9, 0xfc, 0x04, 0x2e, 0x4c,
+	0xd2, 0xfe, 0x58, 0x8f, 0x1b, 0x56, 0xc9, 0xff, 0x95, 0xd4, 0x1f, 0x83, 0xe8, 0xf2, 0x53, 0xb8,
+	0xd6, 0x3c, 0x1d, 0x23, 0xdb, 0xb1, 0x3f, 0xd8, 0x43, 0x5f, 0x70, 0x94, 0x00, 0x1a, 0x8f, 0x3c,
+	0x6f, 0x58, 0x4e, 0x25, 0xc3, 0x39, 0x4c, 0x7f, 0xf4, 0x8f, 0xde, 0xdf, 0x97, 0xe2, 0xed, 0xdb,
+	0xf9, 0x47, 0xe9, 0x89, 0x7a, 0x8c, 0xf7, 0xdf, 0x01, 0x00, 0x00, 0xff, 0xff, 0x66, 0x7d, 0x4e,
+	0xbb, 0x9f, 0x02, 0x00, 0x00,
+}
+
+// Reference imports to suppress errors if they are not otherwise used.
+var _ context.Context
+var _ grpc.ClientConn
+
+// This is a compile-time assertion to ensure that this generated file
+// is compatible with the grpc package it is being compiled against.
+const _ = grpc.SupportPackageIsVersion4
+
+// AlgorithmAggregateClient is the client API for AlgorithmAggregate service.
+//
+// For semantics around ctx use and closing/ending streaming RPCs, please refer to https://godoc.org/google.golang.org/grpc#ClientConn.NewStream.
+type AlgorithmAggregateClient interface {
+	CreateAlgorithm(ctx context.Context, in *CreateAlgorithmCommand, opts ...grpc.CallOption) (*Algorithm, error)
+}
+
+type algorithmAggregateClient struct {
+	cc *grpc.ClientConn
+}
+
+func NewAlgorithmAggregateClient(cc *grpc.ClientConn) AlgorithmAggregateClient {
+	return &algorithmAggregateClient{cc}
+}
+
+func (c *algorithmAggregateClient) CreateAlgorithm(ctx context.Context, in *CreateAlgorithmCommand, opts ...grpc.CallOption) (*Algorithm, error) {
+	out := new(Algorithm)
+	err := c.cc.Invoke(ctx, "/pb.AlgorithmAggregate/CreateAlgorithm", in, out, opts...)
+	if err != nil {
+		return nil, err
+	}
+	return out, nil
+}
+
+// AlgorithmAggregateServer is the server API for AlgorithmAggregate service.
+type AlgorithmAggregateServer interface {
+	CreateAlgorithm(context.Context, *CreateAlgorithmCommand) (*Algorithm, error)
+}
+
+func RegisterAlgorithmAggregateServer(s *grpc.Server, srv AlgorithmAggregateServer) {
+	s.RegisterService(&_AlgorithmAggregate_serviceDesc, srv)
+}
+
+func _AlgorithmAggregate_CreateAlgorithm_Handler(srv interface{}, ctx context.Context, dec func(interface{}) error, interceptor grpc.UnaryServerInterceptor) (interface{}, error) {
+	in := new(CreateAlgorithmCommand)
+	if err := dec(in); err != nil {
+		return nil, err
+	}
+	if interceptor == nil {
+		return srv.(AlgorithmAggregateServer).CreateAlgorithm(ctx, in)
+	}
+	info := &grpc.UnaryServerInfo{
+		Server:     srv,
+		FullMethod: "/pb.AlgorithmAggregate/CreateAlgorithm",
+	}
+	handler := func(ctx context.Context, req interface{}) (interface{}, error) {
+		return srv.(AlgorithmAggregateServer).CreateAlgorithm(ctx, req.(*CreateAlgorithmCommand))
+	}
+	return interceptor(ctx, in, info, handler)
+}
+
+var _AlgorithmAggregate_serviceDesc = grpc.ServiceDesc{
+	ServiceName: "pb.AlgorithmAggregate",
+	HandlerType: (*AlgorithmAggregateServer)(nil),
+	Methods: []grpc.MethodDesc{
+		{
+			MethodName: "CreateAlgorithm",
+			Handler:    _AlgorithmAggregate_CreateAlgorithm_Handler,
+		},
+	},
+	Streams:  []grpc.StreamDesc{},
+	Metadata: "algorithm.proto",
 }

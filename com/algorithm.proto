@@ -1,11 +1,17 @@
 syntax = 'proto3';
 package pb;
 
+service AlgorithmAggregate{
+    rpc CreateAlgorithm(CreateAlgorithmCommand) returns (Algorithm){}
+}
+
 message Algorithm{
     string name = 1;
     string version = 2;
     string id = 3;
 }
+
+//Commands
 message CreateAlgorithmCommand{
     Algorithm algorithm = 1;
     int64 createdOn = 2;
@@ -18,10 +24,15 @@ message CreateAlgorithmCommand{
     string id = 4;
 }
 
-message AlgorithmCreatedCommand{
+message AssociateAlgorithmWithDatasetCommand{       
+}
+
+//Events
+message AlgorithmCreatedEvent{
     Algorithm algorithm = 1;
     string id = 2;
 }
-
-message AlgorithmAssociatedWithDSCommand{       
+message AlgorithmAssociatedWithDatasetEvent{
+    Algorithm algorithm = 1;
+    string id = 3;
 }

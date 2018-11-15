@@ -9,9 +9,11 @@ services:
       context: algorithmAPI
     ports:
       - "3000:3000"
-  registry:
+  algorithmAggregate:
     build:
-      context: algorithm-registry
+      context: algorithm
+    ports:
+      - "50051:50051"
   store:
     build:
       context: eventstore

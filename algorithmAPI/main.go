@@ -7,17 +7,17 @@ import (
 	"net/http"
 	"time"
 
+	"google.golang.org/grpc"
+
 	"github.com/gofrs/uuid"
 	"github.com/gorilla/mux"
-	"github.com/pkg/errors"
 	"github.com/zachlefevre/project_hopper_backend/com"
-	"google.golang.org/grpc"
 )
 
 const (
-	created_event = "create-algorithm"
-	aggregate     = "algorithm"
-	grpcUri       = "store:50051"
+	createdEvent = "create-algorithm"
+	aggregate    = "algorithm"
+	grpcURI      = "algorithmAggregate:50052"
 )
 
 func main() {
@@ -42,18 +42,22 @@ func version(w http.ResponseWriter, r *http.Request) {
 	w.Write([]byte("<h1>V0</h1>"))
 }
 func createAlgorithm(w http.ResponseWriter, r *http.Request) {
-	var createCmd pb.CreateAlgorithmCommand
-	err := json.NewDecoder(r.Body).Decode(&createCmd)
+	var algo pb.Algorithm
+	err := json.NewDecoder(r.Body).Decode(&algo)
 	if err != nil {
 		http.Error(w, "Invalid Algorithm", 500)
 		return
 	}
+
 	cmdID, _ := uuid.NewV4()
-	createCmd.Id = cmdID.String()
-	algoID, _ := uuid.NewV4()
-	createCmd.Algorithm.Id = algoID.String()
-	createCmd.CreatedOn = time.Now().Unix()
-	err = createAlgorithmRPC(createCmd)
+	createCmd := pb.CreateAlgorithmCommand{
+		Algorithm: &algo,
+		CreatedOn: time.Now().Unix(),
+		Files:     nil,
+		Id:        cmdID.String(),
+	}
+
+	resp, err := createAlgorithmRPC(&createCmd)
 	if err != nil {
 		log.Print(err)
 		http.Error(w, "Failed to create algorithm", 500)
@@ -61,33 +65,17 @@ func createAlgorithm(w http.ResponseWriter, r *http.Request) {
 	}
 	w.Header().Set("Content-Type", "application/json")
 	w.WriteHeader(http.StatusCreated)
-	j, _ := json.Marshal(createCmd)
+	j, _ := json.Marshal(resp)
 	w.Write(j)
 }
-func createAlgorithmRPC(cmd pb.CreateAlgorithmCommand) error {
-	conn, err := grpc.Dial(grpcUri, grpc.WithInsecure())
+
+func createAlgorithmRPC(cmd *pb.CreateAlgorithmCommand) (*pb.Algorithm, error) {
+	conn, err := grpc.Dial(grpcURI, grpc.WithInsecure())
 	if err != nil {
-		log.Fatalf("Unable to Connect: %v", err)
+		log.Fatalf("Unable to connect: %v", err)
 	}
 	defer conn.Close()
-	uid, err := uuid.NewV4()
-	client := pb.NewEventStoreClient(conn)
-	cmdJSON, _ := json.Marshal(cmd)
-	event := &pb.Event{
-		EventId:       uid.String(),
-		EventType:     created_event,
-		AggregateId:   cmd.Id,
-		AggregateType: aggregate,
-		EventData:     string(cmdJSON),
-		Channel:       created_event,
-	}
-	resp, err := client.CreateEvent(context.Background(), event)
-	if err != nil {
-		return errors.Wrap(err, "Error from RPC server")
-	}
-	if resp.IsSuccessful {
-		return nil
-	} else {
-		return errors.Wrap(err, "Error from RPC server")
-	}
+
+	client := pb.NewAlgorithmAggregateClient(conn)
+	return client.CreateAlgorithm(context.Background(), cmd)
 }

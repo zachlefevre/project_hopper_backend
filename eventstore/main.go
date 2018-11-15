@@ -20,22 +20,22 @@ import (
 const (
 	port         = ":50051"
 	clusterID    = "test-cluster"
-	baseClientId = "eventstore"
+	baseClientID = "eventstore"
 	natsUrl      = "nats:4222"
 )
 
-type Server struct {
-	*natsutil.StreamingComponent
+type Nats struct {
+	comp *natsutil.StreamingComponent
 }
 
 func main() {
-	cid, _ := uuid.NewV4()
-	clientId := baseClientId + cid.String()
 	lis, err := net.Listen("tcp", port)
 	if err != nil {
 		log.Fatalf("failed to listen: %v", err)
 	}
 
+	cid, _ := uuid.NewV4()
+	clientId := baseClientID + cid.String()
 	comp := natsutil.NewStreamingComponent(clientId)
 
 	err = comp.ConnectToNatsStreamingService(clusterID, stan.NatsURL(natsUrl), stan.ConnectWait(100*time.Second))
@@ -45,28 +45,10 @@ func main() {
 
 	s := grpc.NewServer()
 	log.Println("Event store listening on port:", port)
-	pb.RegisterEventStoreServer(s, &Server{
-		StreamingComponent: comp,
+	pb.RegisterEventStoreServer(s, &Nats{
+		comp: comp,
 	})
 	s.Serve(lis)
-}
-
-func (s *Server) CreateEvent(ctx context.Context, evnt *pb.Event) (*pb.Response, error) {
-	cmd_store := store.NewEventStore()
-	err := cmd_store.PersistEvent(evnt)
-	if err != nil {
-		return nil, err
-	}
-	go publishEvent(s.StreamingComponent, evnt)
-	return &pb.Response{IsSuccessful: true}, nil
-}
-
-func (s *Server) GetEvents(ctx context.Context, filter *pb.EventFilter) (*pb.EventResponse, error) {
-	cmd_store := store.NewEventStore()
-	resp := cmd_store.GetEvents()
-	return &pb.EventResponse{
-		Events: resp,
-	}, nil
 }
 
 func publishEvent(comp *natsutil.StreamingComponent, event *pb.Event) {
@@ -78,4 +60,22 @@ func publishEvent(comp *natsutil.StreamingComponent, event *pb.Event) {
 		log.Fatal("failed to publish", err)
 	}
 	log.Println("Published message on channel: " + channel)
+}
+
+func (s *Nats) CreateEvent(ctx context.Context, evnt *pb.Event) (*pb.Response, error) {
+	cmd_store := store.NewEventStore()
+	err := cmd_store.PersistEvent(evnt)
+	if err != nil {
+		return nil, err
+	}
+	go publishEvent(s.comp, evnt)
+	return &pb.Response{IsSuccessful: true}, nil
+}
+
+func (s *Nats) GetEvents(ctx context.Context, filter *pb.EventFilter) (*pb.EventResponse, error) {
+	cmd_store := store.NewEventStore()
+	resp := cmd_store.GetEvents()
+	return &pb.EventResponse{
+		Events: resp,
+	}, nil
 }
