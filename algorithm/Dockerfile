@@ -10,5 +10,5 @@ LABEL maintainer="@zachlefevre"
 RUN apk --no-cache add ca-certificates
 RUN mkdir /app
 WORKDIR /app
-COPY --from=builder /go/src/github.com/zachlefevre/project_hopper_backend/algorithmAPI .
+COPY --from=builder /go/src/github.com/zachlefevre/project_hopper_backend/algorithm .
 CMD [ "./algorithm" ]
