@@ -3,6 +3,7 @@ kind: Deployment
 metadata:
   name: algorithm-api
 spec:
+  replicas: 3
   selector:
     matchLabels:
       app: algorithm-api
@@ -23,6 +24,7 @@ kind: Deployment
 metadata:
   name: algorithm-aggregate
 spec:
+  replicas: 3
   selector:
     matchLabels:
       app: algorithm-aggregate
@@ -42,6 +44,7 @@ kind: Deployment
 metadata:
   name: eventstore
 spec:
+  replicas: 3
   selector:
     matchLabels:
       app: eventstore
