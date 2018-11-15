@@ -2,20 +2,21 @@ version: '3'
 services:
   nats:
     image: nats-streaming
-    ports:
-        - "4222:4222"
+    restart: always
+    
   api:
     build:
       context: algorithmAPI
     ports:
       - "3000:3000"
+    restart: always
+    
   algorithm_aggregate:
     build:
       context: algorithm
-    ports:
-      - "50051:50051"
+    restart: always
+
   store:
     build:
       context: eventstore
-    ports:
-      - "50051:50051"
+    restart: always
