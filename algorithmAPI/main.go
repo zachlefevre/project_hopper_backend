@@ -33,13 +33,13 @@ func main() {
 func initRoutes() *mux.Router {
 	router := mux.NewRouter()
 	router.HandleFunc("/api/algorithms", createAlgorithm).Methods("POST")
-	router.HandleFunc("/api", version).Methods("GET")
+	router.HandleFunc("/api", sig).Methods("GET")
 	return router
 }
-func version(w http.ResponseWriter, r *http.Request) {
+func sig(w http.ResponseWriter, r *http.Request) {
 	w.Header().Set("Content-Type", "application/html")
 	w.WriteHeader(http.StatusOK)
-	w.Write([]byte("<h1>V0</h1>"))
+	w.Write([]byte("<h1>Made by zachlefevre@gmail.com</h1>"))
 }
 func createAlgorithm(w http.ResponseWriter, r *http.Request) {
 	var algo pb.Algorithm
@@ -53,7 +53,6 @@ func createAlgorithm(w http.ResponseWriter, r *http.Request) {
 	createCmd := pb.CreateAlgorithmCommand{
 		Algorithm: &algo,
 		CreatedOn: time.Now().Unix(),
-		Files:     nil,
 		Id:        cmdID.String(),
 	}
 
@@ -78,4 +77,16 @@ func createAlgorithmRPC(cmd *pb.CreateAlgorithmCommand) (*pb.Algorithm, error) {
 
 	client := pb.NewAlgorithmAggregateClient(conn)
 	return client.CreateAlgorithm(context.Background(), cmd)
+}
+
+func getAlgorithm(w http.ResponseWriter, r *http.Request) {
+	var algoIDBytes []byte
+	_, err := r.Body.Read(algoIDBytes)
+	if err != nil {
+		log.Print(err)
+		http.Error(w, "Failed to get algorithm", 500)
+		return
+	}
+	algoID := string(algoIDBytes)
+
 }
