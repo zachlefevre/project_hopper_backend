@@ -7,16 +7,19 @@ services:
   api:
     build:
       context: algorithmAPI
+    image: frlnbrg/project_hopper_algorithm_api
     ports:
       - "3000:3000"
     restart: always
     
-  algorithm_aggregate:
+  algorithm-aggregate:
     build:
       context: algorithm
+    image: frlnbrg/project_hopper_algorithm_aggregate    
     restart: always
 
-  store:
+  eventstore:
     build:
       context: eventstore
+    image: frlnbrg/project_hopper_event_store    
     restart: always
