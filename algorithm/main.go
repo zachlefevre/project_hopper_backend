@@ -19,7 +19,7 @@ import (
 const (
 	port                   = ":50051"
 	clusterID              = "test-cluster"
-	eventStoreURI          = "store:50051"
+	eventStoreURI          = "eventstore:50051"
 	createAlgorithmChannel = "create-algorithm"
 	aggregate              = "Algorithm"
 )
