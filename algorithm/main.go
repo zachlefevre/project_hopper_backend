@@ -35,6 +35,12 @@ func (a *AlgoServer) CreateAlgorithm(ctx context.Context, cmd *pb.CreateAlgorith
 		log.Printf(eventStoreURI + " is not available. Trying again")
 		conn, err = grpc.Dial(eventStoreURI, grpc.WithInsecure())
 	}
+
+	for _, f := range cmd.Algorithm.Files {
+		fileID, _ := uuid.NewV4()
+		f.Id = fileID.String()
+	}
+
 	algoID, _ := uuid.NewV4()
 	cmd.Algorithm.Id = algoID.String()
 	cmdJSON, _ := json.Marshal(cmd)
@@ -58,6 +64,10 @@ func (a *AlgoServer) CreateAlgorithm(ctx context.Context, cmd *pb.CreateAlgorith
 		return nil, errors.Wrap(err, "Failed to add to event store")
 	}
 	return cmd.Algorithm, nil
+}
+func (a *AlgoServer) GetAlgorithm(ctx context.Context, cmd *pb.ID) (*pb.Algorithm, error) {
+	log.Printf("Algorithm Query Received: ", cmd)
+	return nil, nil
 }
 
 func main() {
