@@ -1,0 +1,8 @@
+sudo: required
+services:
+  - docker
+before_install:
+  - docker build -t frlnbrg/algorithm-api -f Dockerfile.test .
+
+scripts:
+  - docker run frlnbrg/algorithm-api go run test
