@@ -22,45 +22,6 @@ var _ = math.Inf
 // proto package needs to be updated.
 const _ = proto.ProtoPackageIsVersion2 // please upgrade the proto package
 
-type ID struct {
-	Id                   string   `protobuf:"bytes,1,opt,name=id,proto3" json:"id,omitempty"`
-	XXX_NoUnkeyedLiteral struct{} `json:"-"`
-	XXX_unrecognized     []byte   `json:"-"`
-	XXX_sizecache        int32    `json:"-"`
-}
-
-func (m *ID) Reset()         { *m = ID{} }
-func (m *ID) String() string { return proto.CompactTextString(m) }
-func (*ID) ProtoMessage()    {}
-func (*ID) Descriptor() ([]byte, []int) {
-	return fileDescriptor_8c381a4f1e580eed, []int{0}
-}
-
-func (m *ID) XXX_Unmarshal(b []byte) error {
-	return xxx_messageInfo_ID.Unmarshal(m, b)
-}
-func (m *ID) XXX_Marshal(b []byte, deterministic bool) ([]byte, error) {
-	return xxx_messageInfo_ID.Marshal(b, m, deterministic)
-}
-func (m *ID) XXX_Merge(src proto.Message) {
-	xxx_messageInfo_ID.Merge(m, src)
-}
-func (m *ID) XXX_Size() int {
-	return xxx_messageInfo_ID.Size(m)
-}
-func (m *ID) XXX_DiscardUnknown() {
-	xxx_messageInfo_ID.DiscardUnknown(m)
-}
-
-var xxx_messageInfo_ID proto.InternalMessageInfo
-
-func (m *ID) GetId() string {
-	if m != nil {
-		return m.Id
-	}
-	return ""
-}
-
 type AlgorithmFile struct {
 	FileType             string   `protobuf:"bytes,1,opt,name=fileType,proto3" json:"fileType,omitempty"`
 	FileName             string   `protobuf:"bytes,2,opt,name=fileName,proto3" json:"fileName,omitempty"`
@@ -74,7 +35,7 @@ func (m *AlgorithmFile) Reset()         { *m = AlgorithmFile{} }
 func (m *AlgorithmFile) String() string { return proto.CompactTextString(m) }
 func (*AlgorithmFile) ProtoMessage()    {}
 func (*AlgorithmFile) Descriptor() ([]byte, []int) {
-	return fileDescriptor_8c381a4f1e580eed, []int{1}
+	return fileDescriptor_8c381a4f1e580eed, []int{0}
 }
 
 func (m *AlgorithmFile) XXX_Unmarshal(b []byte) error {
@@ -131,7 +92,7 @@ func (m *Algorithm) Reset()         { *m = Algorithm{} }
 func (m *Algorithm) String() string { return proto.CompactTextString(m) }
 func (*Algorithm) ProtoMessage()    {}
 func (*Algorithm) Descriptor() ([]byte, []int) {
-	return fileDescriptor_8c381a4f1e580eed, []int{2}
+	return fileDescriptor_8c381a4f1e580eed, []int{1}
 }
 
 func (m *Algorithm) XXX_Unmarshal(b []byte) error {
@@ -201,7 +162,7 @@ func (m *CreateAlgorithmCommand) Reset()         { *m = CreateAlgorithmCommand{}
 func (m *CreateAlgorithmCommand) String() string { return proto.CompactTextString(m) }
 func (*CreateAlgorithmCommand) ProtoMessage()    {}
 func (*CreateAlgorithmCommand) Descriptor() ([]byte, []int) {
-	return fileDescriptor_8c381a4f1e580eed, []int{3}
+	return fileDescriptor_8c381a4f1e580eed, []int{2}
 }
 
 func (m *CreateAlgorithmCommand) XXX_Unmarshal(b []byte) error {
@@ -237,6 +198,62 @@ func (m *CreateAlgorithmCommand) GetCreatedOn() int64 {
 }
 
 func (m *CreateAlgorithmCommand) GetId() string {
+	if m != nil {
+		return m.Id
+	}
+	return ""
+}
+
+// Queries
+type GetAlgorithmQuery struct {
+	Algorithm            *Algorithm `protobuf:"bytes,1,opt,name=algorithm,proto3" json:"algorithm,omitempty"`
+	CreatedOn            int64      `protobuf:"varint,2,opt,name=createdOn,proto3" json:"createdOn,omitempty"`
+	Id                   string     `protobuf:"bytes,3,opt,name=id,proto3" json:"id,omitempty"`
+	XXX_NoUnkeyedLiteral struct{}   `json:"-"`
+	XXX_unrecognized     []byte     `json:"-"`
+	XXX_sizecache        int32      `json:"-"`
+}
+
+func (m *GetAlgorithmQuery) Reset()         { *m = GetAlgorithmQuery{} }
+func (m *GetAlgorithmQuery) String() string { return proto.CompactTextString(m) }
+func (*GetAlgorithmQuery) ProtoMessage()    {}
+func (*GetAlgorithmQuery) Descriptor() ([]byte, []int) {
+	return fileDescriptor_8c381a4f1e580eed, []int{3}
+}
+
+func (m *GetAlgorithmQuery) XXX_Unmarshal(b []byte) error {
+	return xxx_messageInfo_GetAlgorithmQuery.Unmarshal(m, b)
+}
+func (m *GetAlgorithmQuery) XXX_Marshal(b []byte, deterministic bool) ([]byte, error) {
+	return xxx_messageInfo_GetAlgorithmQuery.Marshal(b, m, deterministic)
+}
+func (m *GetAlgorithmQuery) XXX_Merge(src proto.Message) {
+	xxx_messageInfo_GetAlgorithmQuery.Merge(m, src)
+}
+func (m *GetAlgorithmQuery) XXX_Size() int {
+	return xxx_messageInfo_GetAlgorithmQuery.Size(m)
+}
+func (m *GetAlgorithmQuery) XXX_DiscardUnknown() {
+	xxx_messageInfo_GetAlgorithmQuery.DiscardUnknown(m)
+}
+
+var xxx_messageInfo_GetAlgorithmQuery proto.InternalMessageInfo
+
+func (m *GetAlgorithmQuery) GetAlgorithm() *Algorithm {
+	if m != nil {
+		return m.Algorithm
+	}
+	return nil
+}
+
+func (m *GetAlgorithmQuery) GetCreatedOn() int64 {
+	if m != nil {
+		return m.CreatedOn
+	}
+	return 0
+}
+
+func (m *GetAlgorithmQuery) GetId() string {
 	if m != nil {
 		return m.Id
 	}
@@ -370,10 +387,10 @@ func (m *AlgorithmAssociatedWithDatasetEvent) GetId() string {
 }
 
 func init() {
-	proto.RegisterType((*ID)(nil), "pb.ID")
 	proto.RegisterType((*AlgorithmFile)(nil), "pb.AlgorithmFile")
 	proto.RegisterType((*Algorithm)(nil), "pb.Algorithm")
 	proto.RegisterType((*CreateAlgorithmCommand)(nil), "pb.CreateAlgorithmCommand")
+	proto.RegisterType((*GetAlgorithmQuery)(nil), "pb.GetAlgorithmQuery")
 	proto.RegisterType((*AssociateAlgorithmWithDatasetCommand)(nil), "pb.AssociateAlgorithmWithDatasetCommand")
 	proto.RegisterType((*AlgorithmCreatedEvent)(nil), "pb.AlgorithmCreatedEvent")
 	proto.RegisterType((*AlgorithmAssociatedWithDatasetEvent)(nil), "pb.AlgorithmAssociatedWithDatasetEvent")
@@ -382,29 +399,30 @@ func init() {
 func init() { proto.RegisterFile("algorithm.proto", fileDescriptor_8c381a4f1e580eed) }
 
 var fileDescriptor_8c381a4f1e580eed = []byte{
-	// 341 bytes of a gzipped FileDescriptorProto
-	0x1f, 0x8b, 0x08, 0x00, 0x00, 0x00, 0x00, 0x00, 0x02, 0xff, 0x9c, 0x92, 0x4b, 0x4f, 0xfa, 0x40,
-	0x14, 0xc5, 0xff, 0x94, 0xc7, 0xdf, 0x5e, 0x44, 0xe2, 0x8d, 0x92, 0x86, 0xb8, 0x20, 0xd5, 0x08,
-	0x89, 0x09, 0x0b, 0xdc, 0x9b, 0x10, 0x50, 0xc3, 0x46, 0x93, 0x86, 0x84, 0xf5, 0x94, 0x5e, 0xcb,
-	0x24, 0xb4, 0xd3, 0x74, 0x46, 0x12, 0x17, 0x7e, 0x01, 0x3f, 0xb5, 0xe9, 0x83, 0x19, 0x1e, 0x6e,
-	0x74, 0xc7, 0x9d, 0x73, 0xe6, 0x77, 0xce, 0x5c, 0x0a, 0x6d, 0xb6, 0x0e, 0x45, 0xca, 0xd5, 0x2a,
-	0x1a, 0x26, 0xa9, 0x50, 0x02, 0xad, 0xc4, 0x77, 0x2f, 0xc0, 0x9a, 0x4d, 0xf1, 0x0c, 0x2c, 0x1e,
-	0x38, 0x95, 0x5e, 0x65, 0x60, 0x7b, 0x16, 0x0f, 0xdc, 0x05, 0xb4, 0xc6, 0x5b, 0xf3, 0x13, 0x5f,
-	0x13, 0x76, 0xe1, 0xe4, 0x8d, 0xaf, 0x69, 0xfe, 0x91, 0x50, 0x69, 0xd3, 0xf3, 0x56, 0x7b, 0x61,
-	0x11, 0x39, 0x96, 0xd1, 0xb2, 0xb9, 0x04, 0x57, 0x35, 0xf8, 0xab, 0x02, 0xb6, 0x26, 0x23, 0x42,
-	0x2d, 0xce, 0x6e, 0x15, 0xc4, 0xfc, 0x37, 0x3a, 0xf0, 0x7f, 0x43, 0xa9, 0xe4, 0x22, 0x2e, 0x61,
-	0xdb, 0xf1, 0x90, 0x85, 0x1d, 0x68, 0x48, 0xc5, 0xd4, 0xbb, 0x74, 0x6a, 0xf9, 0x59, 0x39, 0x61,
-	0x1f, 0xea, 0x59, 0xbe, 0x74, 0xea, 0xbd, 0xea, 0xa0, 0x39, 0x3a, 0x1f, 0x26, 0xfe, 0x70, 0xef,
-	0x35, 0x5e, 0xa1, 0xbb, 0x12, 0x3a, 0x93, 0x94, 0x98, 0x22, 0xad, 0x4e, 0x44, 0x14, 0xb1, 0x38,
-	0xc0, 0x3b, 0xb0, 0xf5, 0xb2, 0xf2, 0x76, 0xcd, 0x51, 0x6b, 0x0f, 0xe3, 0x19, 0x1d, 0xaf, 0xc0,
-	0x5e, 0xe6, 0x98, 0xe0, 0xb5, 0xe8, 0x5c, 0xf5, 0xcc, 0xc1, 0xd1, 0x06, 0x6e, 0xe1, 0x66, 0x2c,
-	0xa5, 0x58, 0xf2, 0xdd, 0xdc, 0x05, 0x57, 0xab, 0x29, 0x53, 0x4c, 0x92, 0x2a, 0x2b, 0xb8, 0x73,
-	0xb8, 0x34, 0xb5, 0x0a, 0xda, 0xe3, 0x86, 0x62, 0xf5, 0xbb, 0x6e, 0x45, 0xba, 0xa5, 0xd3, 0x7d,
-	0xb8, 0xd6, 0x3e, 0x5d, 0x23, 0xd8, 0x89, 0xff, 0x73, 0x86, 0x7e, 0xe1, 0xe8, 0x13, 0xd0, 0x64,
-	0x84, 0x61, 0x4a, 0x21, 0x53, 0x84, 0x0f, 0xd0, 0x3e, 0x58, 0x36, 0x76, 0x33, 0xe4, 0xcf, 0xff,
-	0x40, 0x77, 0x3f, 0xce, 0xfd, 0x87, 0x7d, 0x38, 0x7d, 0x26, 0x65, 0x2e, 0x37, 0x32, 0xc3, 0x6c,
-	0x7a, 0x64, 0xf4, 0x1b, 0xf9, 0xc7, 0x7d, 0xff, 0x1d, 0x00, 0x00, 0xff, 0xff, 0xac, 0x1f, 0x47,
-	0xbf, 0xef, 0x02, 0x00, 0x00,
+	// 366 bytes of a gzipped FileDescriptorProto
+	0x1f, 0x8b, 0x08, 0x00, 0x00, 0x00, 0x00, 0x00, 0x02, 0xff, 0xb4, 0x93, 0x4b, 0x4b, 0xeb, 0x40,
+	0x14, 0xc7, 0x6f, 0xd2, 0xc7, 0xbd, 0x39, 0xbd, 0xb5, 0xf4, 0x48, 0x4b, 0x28, 0x2e, 0x4a, 0x14,
+	0x2d, 0x08, 0x59, 0x44, 0x70, 0x29, 0x94, 0x5a, 0xdd, 0x29, 0xc6, 0x42, 0xd7, 0x93, 0x66, 0x4c,
+	0x07, 0x9a, 0x07, 0x33, 0xd3, 0x42, 0xbf, 0x82, 0xf8, 0xa1, 0x25, 0x49, 0x3b, 0x69, 0x1a, 0x37,
+	0x0a, 0xee, 0x72, 0xce, 0x7f, 0xce, 0xef, 0x7f, 0x1e, 0x04, 0x3a, 0x64, 0x15, 0xc4, 0x9c, 0xc9,
+	0x65, 0x68, 0x27, 0x3c, 0x96, 0x31, 0xea, 0x89, 0x67, 0xcd, 0xa1, 0x3d, 0xde, 0xa7, 0x1f, 0xd8,
+	0x8a, 0xe2, 0x00, 0xfe, 0xbd, 0xb1, 0x15, 0x9d, 0x6d, 0x13, 0x6a, 0x6a, 0x43, 0x6d, 0x64, 0xb8,
+	0x2a, 0xde, 0x6b, 0x4f, 0x24, 0xa4, 0xa6, 0x5e, 0x68, 0x69, 0x8c, 0x27, 0xa0, 0x33, 0xdf, 0xac,
+	0x65, 0x59, 0x9d, 0xf9, 0xd6, 0xbb, 0x06, 0x86, 0x22, 0x23, 0x42, 0x3d, 0x4a, 0xab, 0x72, 0x62,
+	0xf6, 0x8d, 0x26, 0xfc, 0xdd, 0x50, 0x2e, 0x58, 0x1c, 0xed, 0x60, 0xfb, 0xf0, 0x98, 0x85, 0x7d,
+	0x68, 0x0a, 0x49, 0xe4, 0x5a, 0x98, 0xf5, 0x2c, 0xb7, 0x8b, 0xf0, 0x0a, 0x1a, 0xa9, 0xbf, 0x30,
+	0x1b, 0xc3, 0xda, 0xa8, 0xe5, 0x74, 0xed, 0xc4, 0xb3, 0x4b, 0xd3, 0xb8, 0xb9, 0x6e, 0x09, 0xe8,
+	0x4f, 0x38, 0x25, 0x92, 0x2a, 0x75, 0x12, 0x87, 0x21, 0x89, 0x7c, 0xbc, 0x06, 0x43, 0xad, 0x25,
+	0xeb, 0xae, 0xe5, 0xb4, 0x4b, 0x18, 0xb7, 0xd0, 0xf1, 0x0c, 0x8c, 0x45, 0x86, 0xf1, 0x9f, 0xf3,
+	0x9e, 0x6b, 0x6e, 0x91, 0xa8, 0x6c, 0x20, 0x82, 0xee, 0x23, 0x95, 0x0a, 0xf4, 0xb2, 0xa6, 0x7c,
+	0xfb, 0x9b, 0x7e, 0x97, 0x70, 0x31, 0x16, 0x22, 0x5e, 0xb0, 0xc3, 0x39, 0xe7, 0x4c, 0x2e, 0xef,
+	0x89, 0x24, 0x82, 0xca, 0xdd, 0xc8, 0xd6, 0x0c, 0x7a, 0xc5, 0x1a, 0x72, 0xda, 0x74, 0x43, 0x23,
+	0xf9, 0xbd, 0xde, 0x72, 0x77, 0x5d, 0xb9, 0x7b, 0x70, 0xae, 0xde, 0xa9, 0x36, 0xfc, 0x03, 0xfb,
+	0x1f, 0x7b, 0xa8, 0x09, 0x9d, 0x0f, 0x0d, 0xb0, 0x30, 0x09, 0x02, 0x4e, 0x03, 0x22, 0x29, 0xde,
+	0x41, 0xe7, 0xe8, 0xba, 0x38, 0x48, 0x99, 0x5f, 0x9f, 0x7c, 0x50, 0xf6, 0xb3, 0xfe, 0xe0, 0x2d,
+	0xfc, 0x3f, 0x3c, 0x14, 0xf6, 0xd2, 0x07, 0x95, 0xd3, 0x55, 0xea, 0x9c, 0x29, 0x9c, 0x96, 0x9f,
+	0xbc, 0xca, 0x98, 0x53, 0xb4, 0x8f, 0x70, 0xe5, 0xba, 0x0a, 0xc6, 0x6b, 0x66, 0x7f, 0xe3, 0xcd,
+	0x67, 0x00, 0x00, 0x00, 0xff, 0xff, 0xab, 0xfe, 0x58, 0x74, 0xa0, 0x03, 0x00, 0x00,
 }
 
 // Reference imports to suppress errors if they are not otherwise used.
@@ -420,7 +438,7 @@ const _ = grpc.SupportPackageIsVersion4
 // For semantics around ctx use and closing/ending streaming RPCs, please refer to https://godoc.org/google.golang.org/grpc#ClientConn.NewStream.
 type AlgorithmAggregateClient interface {
 	CreateAlgorithm(ctx context.Context, in *CreateAlgorithmCommand, opts ...grpc.CallOption) (*Algorithm, error)
-	GetAlgorithm(ctx context.Context, in *ID, opts ...grpc.CallOption) (*Algorithm, error)
+	GetAlgorithm(ctx context.Context, in *GetAlgorithmQuery, opts ...grpc.CallOption) (*Algorithm, error)
 }
 
 type algorithmAggregateClient struct {
@@ -440,7 +458,7 @@ func (c *algorithmAggregateClient) CreateAlgorithm(ctx context.Context, in *Crea
 	return out, nil
 }
 
-func (c *algorithmAggregateClient) GetAlgorithm(ctx context.Context, in *ID, opts ...grpc.CallOption) (*Algorithm, error) {
+func (c *algorithmAggregateClient) GetAlgorithm(ctx context.Context, in *GetAlgorithmQuery, opts ...grpc.CallOption) (*Algorithm, error) {
 	out := new(Algorithm)
 	err := c.cc.Invoke(ctx, "/pb.AlgorithmAggregate/GetAlgorithm", in, out, opts...)
 	if err != nil {
@@ -452,7 +470,7 @@ func (c *algorithmAggregateClient) GetAlgorithm(ctx context.Context, in *ID, opt
 // AlgorithmAggregateServer is the server API for AlgorithmAggregate service.
 type AlgorithmAggregateServer interface {
 	CreateAlgorithm(context.Context, *CreateAlgorithmCommand) (*Algorithm, error)
-	GetAlgorithm(context.Context, *ID) (*Algorithm, error)
+	GetAlgorithm(context.Context, *GetAlgorithmQuery) (*Algorithm, error)
 }
 
 func RegisterAlgorithmAggregateServer(s *grpc.Server, srv AlgorithmAggregateServer) {
@@ -478,7 +496,7 @@ func _AlgorithmAggregate_CreateAlgorithm_Handler(srv interface{}, ctx context.Co
 }
 
 func _AlgorithmAggregate_GetAlgorithm_Handler(srv interface{}, ctx context.Context, dec func(interface{}) error, interceptor grpc.UnaryServerInterceptor) (interface{}, error) {
-	in := new(ID)
+	in := new(GetAlgorithmQuery)
 	if err := dec(in); err != nil {
 		return nil, err
 	}
@@ -490,7 +508,7 @@ func _AlgorithmAggregate_GetAlgorithm_Handler(srv interface{}, ctx context.Conte
 		FullMethod: "/pb.AlgorithmAggregate/GetAlgorithm",
 	}
 	handler := func(ctx context.Context, req interface{}) (interface{}, error) {
-		return srv.(AlgorithmAggregateServer).GetAlgorithm(ctx, req.(*ID))
+		return srv.(AlgorithmAggregateServer).GetAlgorithm(ctx, req.(*GetAlgorithmQuery))
 	}
 	return interceptor(ctx, in, info, handler)
 }
@@ -506,6 +524,70 @@ var _AlgorithmAggregate_serviceDesc = grpc.ServiceDesc{
 		{
 			MethodName: "GetAlgorithm",
 			Handler:    _AlgorithmAggregate_GetAlgorithm_Handler,
+		},
+	},
+	Streams:  []grpc.StreamDesc{},
+	Metadata: "algorithm.proto",
+}
+
+// AlgorithmQueryStoreClient is the client API for AlgorithmQueryStore service.
+//
+// For semantics around ctx use and closing/ending streaming RPCs, please refer to https://godoc.org/google.golang.org/grpc#ClientConn.NewStream.
+type AlgorithmQueryStoreClient interface {
+	GetAlgorithm(ctx context.Context, in *Algorithm, opts ...grpc.CallOption) (*Algorithm, error)
+}
+
+type algorithmQueryStoreClient struct {
+	cc *grpc.ClientConn
+}
+
+func NewAlgorithmQueryStoreClient(cc *grpc.ClientConn) AlgorithmQueryStoreClient {
+	return &algorithmQueryStoreClient{cc}
+}
+
+func (c *algorithmQueryStoreClient) GetAlgorithm(ctx context.Context, in *Algorithm, opts ...grpc.CallOption) (*Algorithm, error) {
+	out := new(Algorithm)
+	err := c.cc.Invoke(ctx, "/pb.AlgorithmQueryStore/GetAlgorithm", in, out, opts...)
+	if err != nil {
+		return nil, err
+	}
+	return out, nil
+}
+
+// AlgorithmQueryStoreServer is the server API for AlgorithmQueryStore service.
+type AlgorithmQueryStoreServer interface {
+	GetAlgorithm(context.Context, *Algorithm) (*Algorithm, error)
+}
+
+func RegisterAlgorithmQueryStoreServer(s *grpc.Server, srv AlgorithmQueryStoreServer) {
+	s.RegisterService(&_AlgorithmQueryStore_serviceDesc, srv)
+}
+
+func _AlgorithmQueryStore_GetAlgorithm_Handler(srv interface{}, ctx context.Context, dec func(interface{}) error, interceptor grpc.UnaryServerInterceptor) (interface{}, error) {
+	in := new(Algorithm)
+	if err := dec(in); err != nil {
+		return nil, err
+	}
+	if interceptor == nil {
+		return srv.(AlgorithmQueryStoreServer).GetAlgorithm(ctx, in)
+	}
+	info := &grpc.UnaryServerInfo{
+		Server:     srv,
+		FullMethod: "/pb.AlgorithmQueryStore/GetAlgorithm",
+	}
+	handler := func(ctx context.Context, req interface{}) (interface{}, error) {
+		return srv.(AlgorithmQueryStoreServer).GetAlgorithm(ctx, req.(*Algorithm))
+	}
+	return interceptor(ctx, in, info, handler)
+}
+
+var _AlgorithmQueryStore_serviceDesc = grpc.ServiceDesc{
+	ServiceName: "pb.AlgorithmQueryStore",
+	HandlerType: (*AlgorithmQueryStoreServer)(nil),
+	Methods: []grpc.MethodDesc{
+		{
+			MethodName: "GetAlgorithm",
+			Handler:    _AlgorithmQueryStore_GetAlgorithm_Handler,
 		},
 	},
 	Streams:  []grpc.StreamDesc{},

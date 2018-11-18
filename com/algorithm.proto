@@ -3,12 +3,12 @@ package pb;
 
 service AlgorithmAggregate{
     rpc CreateAlgorithm(CreateAlgorithmCommand) returns (Algorithm){}
-    rpc GetAlgorithm(ID) returns (Algorithm) {}
+    rpc GetAlgorithm(GetAlgorithmQuery) returns (Algorithm) {}
+}
+service AlgorithmQueryStore{
+    rpc GetAlgorithm(Algorithm) returns (Algorithm) {}
 }
 
-message ID {
-    string id = 1;
-}
 message AlgorithmFile {
     string fileType = 1;
     string fileName = 2;
@@ -26,6 +26,13 @@ message Algorithm{
 
 //Commands
 message CreateAlgorithmCommand{
+    Algorithm algorithm = 1;
+    int64 createdOn = 2;
+    string id = 3;
+}
+
+//Queries
+message GetAlgorithmQuery{
     Algorithm algorithm = 1;
     int64 createdOn = 2;
     string id = 3;
