@@ -80,13 +80,42 @@ func createAlgorithmRPC(cmd *pb.CreateAlgorithmCommand) (*pb.Algorithm, error) {
 }
 
 func getAlgorithm(w http.ResponseWriter, r *http.Request) {
-	var algoIDBytes []byte
-	_, err := r.Body.Read(algoIDBytes)
+	var algo pb.Algorithm
+	err := json.NewDecoder(r.Body).Decode(&algo)
+	if err != nil {
+		http.Error(w, "Invalid algoritm", 500)
+		return
+	}
+
+	queryID, _ := uuid.NewV4()
+	getQuery := pb.GetAlgorithmQuery{
+		Algorithm: &algo,
+		CreatedOn: time.Now().Unix(),
+		Id:        queryID.String(),
+	}
+	resp, err := getAlgorithmRPC(&getQuery)
 	if err != nil {
 		log.Print(err)
 		http.Error(w, "Failed to get algorithm", 500)
 		return
 	}
-	algoID := string(algoIDBytes)
+	w.Header().Set("Content-Type", "application/json")
+	if resp == nil {
+		w.WriteHeader(http.StatusNotFound)
+	} else {
+		w.WriteHeader(http.StatusFound)
+	}
+	j, _ := json.Marshal(resp)
+	w.Write(j)
+}
 
+func getAlgorithmRPC(query *pb.GetAlgorithmQuery) (*pb.Algorithm, error) {
+	conn, err := grpc.Dial(grpcURI, grpc.WithInsecure())
+	if err != nil {
+		log.Fatalf("Unable to connect: %v", err)
+	}
+	defer conn.Close()
+
+	client := pb.NewAlgorithmAggregateClient(conn)
+	return client.GetAlgorithm(context.Background(), query)
 }
