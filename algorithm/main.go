@@ -20,6 +20,7 @@ const (
 	port                   = ":50051"
 	clusterID              = "test-cluster"
 	eventStoreURI          = "eventstore:50051"
+	queryStoreURI          = "querystore:50051"
 	createAlgorithmChannel = "create-algorithm"
 	aggregate              = "Algorithm"
 )
@@ -65,9 +66,20 @@ func (a *AlgoServer) CreateAlgorithm(ctx context.Context, cmd *pb.CreateAlgorith
 	}
 	return cmd.Algorithm, nil
 }
-func (a *AlgoServer) GetAlgorithm(ctx context.Context, cmd *pb.ID) (*pb.Algorithm, error) {
-	log.Printf("Algorithm Query Received: ", cmd)
-	return nil, nil
+func (a *AlgoServer) GetAlgorithm(ctx context.Context, algo *pb.Algorithm) (*pb.Algorithm, error) {
+	log.Printf("Algorithm Query Received: ", algo)
+	var conn *grpc.ClientConn
+	var err error
+	for conn, err = grpc.Dial(queryStoreURI, grpc.WithInsecure()); err != nil; time.Sleep(time.Second * 5) {
+		log.Printf(queryStoreURI + " is not available. Trying again")
+		conn, err = grpc.Dial(queryStoreURI, grpc.WithInsecure())
+	}
+	queryStore := pb.NewAlgorithmQueryStoreClient(conn)
+	response, err := queryStore.GetAlgorithm(ctx, algo)
+	if err != nil {
+		return nil, errors.Wrap(err, "Failed to get from algorithm query store")
+	}
+	return response, nil
 }
 
 func main() {
