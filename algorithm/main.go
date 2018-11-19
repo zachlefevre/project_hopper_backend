@@ -66,8 +66,8 @@ func (a *AlgoServer) CreateAlgorithm(ctx context.Context, cmd *pb.CreateAlgorith
 	}
 	return cmd.Algorithm, nil
 }
-func (a *AlgoServer) GetAlgorithm(ctx context.Context, algo *pb.Algorithm) (*pb.Algorithm, error) {
-	log.Printf("Algorithm Query Received: ", algo)
+func (a *AlgoServer) GetAlgorithm(ctx context.Context, qry *pb.GetAlgorithmQuery) (*pb.Algorithm, error) {
+	log.Printf("Algorithm Query Received: ", qry)
 	var conn *grpc.ClientConn
 	var err error
 	for conn, err = grpc.Dial(queryStoreURI, grpc.WithInsecure()); err != nil; time.Sleep(time.Second * 5) {
@@ -75,7 +75,7 @@ func (a *AlgoServer) GetAlgorithm(ctx context.Context, algo *pb.Algorithm) (*pb.
 		conn, err = grpc.Dial(queryStoreURI, grpc.WithInsecure())
 	}
 	queryStore := pb.NewAlgorithmQueryStoreClient(conn)
-	response, err := queryStore.GetAlgorithm(ctx, algo)
+	response, err := queryStore.GetAlgorithm(ctx, qry.Algorithm)
 	if err != nil {
 		return nil, errors.Wrap(err, "Failed to get from algorithm query store")
 	}
