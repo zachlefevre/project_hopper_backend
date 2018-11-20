@@ -20,9 +20,9 @@ type store struct {
 func (s store) GetAlgorithm(ctx context.Context, algo *pb.Algorithm) (*pb.Algorithm, error) {
 	log.Print("query store: query algorithm request")
 	return &pb.Algorithm{
-		Name:    "tst",
-		Version: "v0",
-		Status:  "",
+		Name:    algo.Name + "but better",
+		Version: algo.Version,
+		Status:  "created",
 		Files:   nil,
 	}, nil
 }
