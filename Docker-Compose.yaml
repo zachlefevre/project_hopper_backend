@@ -23,3 +23,9 @@ services:
       context: eventstore
     image: frlnbrg/project_hopper_event_store    
     restart: always
+
+  querystore:
+    build:
+      context: algorithmQueryStore
+    image: frlnbrg/algorithm_query_store
+    restart: always
