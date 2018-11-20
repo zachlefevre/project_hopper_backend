@@ -26,6 +26,7 @@ const (
 	aggregate      = "Alorithm"
 	durableID      = "algorithm-repository-durable"
 	natsURL        = "nats:4222"
+	queryStoreURI  = "queryStore:50051"
 )
 
 func main() {
@@ -54,7 +55,7 @@ func main() {
 				return
 			}
 
-			//persist to query store
+			persistToQueryStore(&createCmd)
 
 			eventID, _ := uuid.NewV4()
 			createdEvent := pb.AlgorithmCreatedEvent{
