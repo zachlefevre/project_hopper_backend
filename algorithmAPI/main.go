@@ -33,6 +33,7 @@ func main() {
 func initRoutes() *mux.Router {
 	router := mux.NewRouter()
 	router.HandleFunc("/api/algorithms", createAlgorithm).Methods("POST")
+	router.HandleFunc("/api/algorithms", getAlgorithm).Methods("GET")
 	router.HandleFunc("/api", sig).Methods("GET")
 	return router
 }
