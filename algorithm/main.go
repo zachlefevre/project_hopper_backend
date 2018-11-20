@@ -76,6 +76,7 @@ func (a *AlgoServer) GetAlgorithm(ctx context.Context, qry *pb.GetAlgorithmQuery
 	}
 	queryStore := pb.NewAlgorithmQueryStoreClient(conn)
 	response, err := queryStore.GetAlgorithm(ctx, qry.Algorithm)
+	log.Print("received algorithm: ", response)
 	if err != nil {
 		return nil, errors.Wrap(err, "Failed to get from algorithm query store")
 	}
