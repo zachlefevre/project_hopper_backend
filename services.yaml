@@ -42,3 +42,15 @@ spec:
   ports:
   - port: 4222
     targetPort: 4222
+---
+kind: Service
+apiVersion: v1
+metadata:
+  name: querystore
+spec:
+  selector:
+    app: querystore
+  ports:
+  - port: 50051
+    targetPort: 50051
+

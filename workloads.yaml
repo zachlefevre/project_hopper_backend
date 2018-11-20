@@ -77,4 +77,41 @@ spec:
         image: nats-streaming
         ports:
         - containerPort: 4222
+---
+  apiVersion: apps/v1
+  kind: Deployment
+  metadata:
+    name: querystore
+  spec:
+    selector:
+      matchLabels:
+        app: querystore
+    template:
+      metadata:
+        labels:
+          app: querystore
+      spec:
+        containers:
+        - name: querystore
+          image: frlnbrg/algorithm_query_store
+          ports:
+          - containerPort: 50051
+---
+apiVersion: apps/v1
+kind: Deployment
+metadata:
+  name: algorithm-sync-worker
+spec:
+  selector:
+    matchLabels:
+      app: algorithm-sync-worker
+  template:
+    metadata:
+      labels:
+        app: algorithm-sync-worker
+    spec:
+      containers:
+      - name: algorithm-sync-worker
+        image: frlnbrg/algorithm_sync_worker
 
+  
