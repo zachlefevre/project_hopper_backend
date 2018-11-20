@@ -2,6 +2,7 @@ package main
 
 import (
 	"context"
+	"database/sql"
 	"log"
 	"net"
 
@@ -37,6 +38,7 @@ func (s store) CreateAlgorithm(ctx context.Context, algo *pb.Algorithm) (*pb.Alg
 }
 
 func main() {
+	initDB()
 	lis, err := net.Listen("tcp", port)
 	if err != nil {
 		log.Fatalf("failed to listen: %v", err)
@@ -46,4 +48,17 @@ func main() {
 	log.Println("Algorithm query store is running on:", port)
 	pb.RegisterAlgorithmQueryStoreServer(s, &store{})
 	s.Serve(lis)
+}
+
+func initDB() {
+	db, err := sql.Open("postgres", "postgresql://grace@localhost:26257/algorithms?sslmode=disable")
+	if err != nil {
+		log.Fatal("error connecting to the database: ", err)
+	}
+
+	//Create the table
+	if _, err := db.Exec(
+		"CREATE TABLE IF NOT EXISTS algorithm (id INT PRIMARY KEY, balance INT)"); err != nil {
+		log.Fatal(err)
+	}
 }
