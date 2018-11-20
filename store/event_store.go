@@ -15,5 +15,9 @@ func (store EventStore) GetEvents() []*pb.Event {
 }
 
 func NewEventStore() EventStore {
-	return EventStore{history: &local_persistence{}}
+	return EventStore{history: postgresDB{}}
+}
+
+func init() {
+	postgresDB{}.init()
 }

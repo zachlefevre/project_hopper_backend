@@ -52,6 +52,7 @@ func main() {
 
 func initDB() {
 	db, err := sql.Open("postgres", "postgresql://grace@localhost:26257/algorithms?sslmode=disable")
+	defer db.Close()
 	if err != nil {
 		log.Fatal("error connecting to the database: ", err)
 	}
