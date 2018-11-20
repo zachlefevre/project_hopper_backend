@@ -26,6 +26,7 @@ const (
 	aggregate     = "Alorithm"
 	durableID     = "algorithm-repository-durable"
 	natsURL       = "nats:4222"
+	queryStoreURI = "querystore:50051"
 )
 
 func main() {
