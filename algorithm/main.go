@@ -44,8 +44,8 @@ func (a *AlgoServer) CreateAlgorithm(ctx context.Context, cmd *pb.CreateAlgorith
 
 	algoID, _ := uuid.NewV4()
 	cmd.Algorithm.Id = algoID.String()
-	cmdJSON, _ := json.Marshal(cmd)
 	eventID, _ := uuid.NewV4()
+	cmdJSON, _ := json.Marshal(cmd)
 	event := &pb.Event{
 		EventId:       eventID.String(),
 		EventType:     createAlgorithmChannel,
