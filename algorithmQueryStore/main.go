@@ -19,11 +19,11 @@ type store struct {
 
 func (s store) GetAlgorithm(ctx context.Context, algo *pb.Algorithm) (*pb.Algorithm, error) {
 	log.Print("query store: query algorithm request")
-	return nil, nil
+	return &pb.Algorithm{}, nil
 }
 func (s store) CreateAlgorithm(ctx context.Context, algo *pb.Algorithm) (*pb.Algorithm, error) {
 	log.Print("query store: create algorithm request")
-	return nil, nil
+	return &pb.Algorithm{}, nil
 }
 
 func main() {

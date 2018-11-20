@@ -29,3 +29,9 @@ services:
       context: algorithmQueryStore
     image: frlnbrg/algorithm_query_store
     restart: always
+
+  algorithm-sync-worker:
+    build:
+      context: algorithmSync
+    image: frlnbrg/algorithm_sync_worker
+    restart: always
