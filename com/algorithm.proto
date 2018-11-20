@@ -7,6 +7,7 @@ service AlgorithmAggregate{
 }
 service AlgorithmQueryStore{
     rpc GetAlgorithm(Algorithm) returns (Algorithm) {}
+    rpc CreateAlgorithm(Algorithm) returns (Algorithm){}
 }
 
 message AlgorithmFile {
