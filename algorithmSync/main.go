@@ -34,7 +34,7 @@ func main() {
 	clientID := baseClientID + cid.String()
 	comp := natsutil.NewStreamingComponent(clientID)
 
-	err := comp.ConnectToNatsStreamingService(baseClientID, stan.NatsURL(natsURL), stan.ConnectWait(100*time.Second))
+	err := comp.ConnectToNatsStreamingService(clusterID, stan.NatsURL(natsURL), stan.ConnectWait(100*time.Second))
 	if err != nil {
 		log.Fatal(err)
 	}
@@ -48,7 +48,7 @@ func main() {
 	go func() {
 		sc.Subscribe(createChannel, func(msg *stan.Msg) {
 			msg.Ack()
-			log.Printf("algorithm query store heard ", msg.Data)
+			log.Printf("algorithm sync heard ", msg.Data)
 			createCmd := pb.CreateAlgorithmCommand{}
 			err := json.Unmarshal(msg.Data, &createCmd)
 			if err != nil {
