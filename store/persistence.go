@@ -10,7 +10,7 @@ import (
 )
 
 const (
-	dbAddress = "event-db:5432"
+	dbAddress = "event-db:26257"
 )
 
 type persistence interface {
@@ -34,7 +34,7 @@ func (db postgresDB) getAll() []*pb.Event {
 
 func (db postgresDB) init() {
 	log.Printf("initializing DB")
-	con, err := sql.Open("postgres", "postgresql://root@"+dbAddress+"/?sslmode=disable")
+	con, err := sql.Open("postgres", "postgres://root@"+dbAddress+"/?sslmode=disable")
 	defer con.Close()
 	if err != nil {
 		log.Fatal("error connecting to the command DB: ", err)
