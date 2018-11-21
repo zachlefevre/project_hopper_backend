@@ -35,3 +35,7 @@ services:
       context: algorithmSync
     image: frlnbrg/algorithm_sync_worker
     restart: always
+
+  event-db:
+    image: postgres
+    restart: always

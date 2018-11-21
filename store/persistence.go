@@ -18,20 +18,17 @@ type postgresDB struct {
 
 func (db postgresDB) add(event *pb.Event) error {
 	log.Printf("Adding event to DB", event)
-	con, err := sql.Open("postgres", "postgresql://root@localhost:26257/?sslmode=disable")
-	defer con.Close()
 	return nil
 }
 
 func (db postgresDB) getAll() []*pb.Event {
 	log.Printf("request for all events")
-	con, err := sql.Open("postgres", "postgresql://root@localhost:26257/?sslmode=disable")
-	defer con.Close()
 	return nil
 }
 
 func (db postgresDB) init() {
-	con, err := sql.Open("postgres", "postgresql://root@localhost:26257/?sslmode=disable")
+	log.Printf("initializing DB")
+	con, err := sql.Open("postgres", "postgresql://root@event-db:26257/?sslmode=disable")
 	defer con.Close()
 	if err != nil {
 		log.Fatal("error connecting to the command DB: ", err)

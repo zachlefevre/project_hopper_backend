@@ -1,6 +1,8 @@
 package store
 
-import "github.com/zachlefevre/project_hopper_backend/com"
+import (
+	"github.com/zachlefevre/project_hopper_backend/com"
+)
 
 type EventStore struct {
 	history persistence
