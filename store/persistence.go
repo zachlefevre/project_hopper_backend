@@ -34,7 +34,7 @@ func (db postgresDB) getAll() []*pb.Event {
 
 func (db postgresDB) init() {
 	log.Printf("initializing DB")
-	con, err := sql.Open("postgres", "postgresql://"+dbAddress+"/?sslmode=disable")
+	con, err := sql.Open("postgres", "postgresql://root@"+dbAddress+"/?sslmode=disable")
 	defer con.Close()
 	if err != nil {
 		log.Fatal("error connecting to the command DB: ", err)
