@@ -4,7 +4,13 @@ import (
 	"database/sql"
 	"log"
 
+	_ "github.com/lib/pq"
+
 	"github.com/zachlefevre/project_hopper_backend/com"
+)
+
+const (
+	dbAddress = "event-db:5432"
 )
 
 type persistence interface {
@@ -28,7 +34,7 @@ func (db postgresDB) getAll() []*pb.Event {
 
 func (db postgresDB) init() {
 	log.Printf("initializing DB")
-	con, err := sql.Open("postgres", "postgresql://root@event-db:26257/?sslmode=disable")
+	con, err := sql.Open("postgres", "postgresql://"+dbAddress+"/?sslmode=disable")
 	defer con.Close()
 	if err != nil {
 		log.Fatal("error connecting to the command DB: ", err)

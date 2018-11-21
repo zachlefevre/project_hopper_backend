@@ -13,7 +13,6 @@ import (
 
 	"github.com/zachlefevre/project_hopper_backend/natsutil"
 
-	_ "github.com/lib/pq"
 	"github.com/zachlefevre/project_hopper_backend/com"
 	"github.com/zachlefevre/project_hopper_backend/store"
 )
