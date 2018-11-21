@@ -53,4 +53,16 @@ spec:
   ports:
   - port: 50051
     targetPort: 50051
+---
+kind: Service
+apiVersion: v1
+metadata:
+  name: event-db
+spec:
+  selector:
+    app: event-db
+  ports:
+  - port: 26257
+    targetPort: 26257
+
 
