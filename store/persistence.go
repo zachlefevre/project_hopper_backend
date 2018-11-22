@@ -30,7 +30,7 @@ func (db postgresDB) add(event *pb.Event) error {
 	if err != nil {
 		log.Fatal("Failed to open DB connection")
 	}
-	eventString := fmt.Sprintf("%v, %v, %v, %v, %v, %v",
+	eventString := fmt.Sprintf("'%v', '%v', '%v', '%v', '%v', '%v'",
 		event.EventId,
 		event.EventType,
 		event.AggregateId,
@@ -38,7 +38,7 @@ func (db postgresDB) add(event *pb.Event) error {
 		event.EventData,
 		event.Channel)
 	sql := "INSERT INTO log.commands VALUES(" + eventString + ")"
-	log.Println("executing: ", eventString)
+	log.Println("executing: ", sql)
 	if res, err := con.Exec(sql); err != nil {
 		log.Println("Failed to persist to DB", err)
 	} else {
