@@ -24,7 +24,7 @@ type postgresDB struct {
 }
 
 func (db postgresDB) add(event *pb.Event) error {
-	log.Printf("Adding event to DB", event)
+	log.Println("Adding event to DB", event)
 	con, err := sql.Open("postgres", connectionstring)
 	defer con.Close()
 	if err != nil {
@@ -38,9 +38,9 @@ func (db postgresDB) add(event *pb.Event) error {
 		event.EventData,
 		event.Channel)
 	if res, err := con.Exec("INSERT INTO log.commands VALUES(" + eventString + ")"); err != nil {
-		log.Printf("Failed to persist to DB", err)
+		log.Println("Failed to persist to DB", err)
 	} else {
-		log.Printf("persisted event to DB", res)
+		log.Println("persisted event to DB", res)
 	}
 	return nil
 }
@@ -66,9 +66,9 @@ func (db postgresDB) init() {
 	}
 	log.Printf("Checking if commands db exists")
 	if res, err := con.Exec(
-		"CREATE TABLE IF NOT EXISTS log.commands (id INT PRIMARY KEY, string event_type, string aggregate_id, string aggregate_type, string event_data, string channel)"); err != nil {
+		"CREATE TABLE IF NOT EXISTS log.commands (id INT PRIMARY KEY, event_type STRING, aggregate_id STRING, aggregate_type STRING, event_data STRING, channel STRING)"); err != nil {
 		log.Fatal("cannot create table: ", err)
 	} else {
-		log.Printf("created table", res)
+		log.Println("created table", res)
 	}
 }
