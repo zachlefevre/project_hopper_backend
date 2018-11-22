@@ -10,7 +10,7 @@ import (
 )
 
 const (
-	connectionstring = "postgresql://grace@event-db/?sslmode=disable"
+	connectionstring = "postgresql://grace@cockroachdb:26257/?sslmode=disable"
 )
 
 type persistence interface {
