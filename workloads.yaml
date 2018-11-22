@@ -119,6 +119,6 @@ spec:
       containers:
       - name: algorithm-sync-worker
         image: frlnbrg/algorithm_sync_worker
-      imagePullPolicy: Always
+        imagePullPolicy: Always
 
   
