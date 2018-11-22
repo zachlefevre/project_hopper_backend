@@ -17,6 +17,7 @@ spec:
         image: frlnbrg/project_hopper_algorithm_api
         ports:
         - containerPort: 3000
+        imagePullPolicy: Always
 
 ---
 apiVersion: apps/v1
@@ -38,6 +39,7 @@ spec:
         image: frlnbrg/project_hopper_algorithm_aggregate
         ports:
         - containerPort: 50051
+        imagePullPolicy: Always
 ---
 apiVersion: apps/v1
 kind: Deployment
@@ -58,6 +60,8 @@ spec:
         image: frlnbrg/project_hopper_event_store   
         ports:
         - containerPort: 50051
+        imagePullPolicy: Always
+
 ---
 apiVersion: apps/v1
 kind: Deployment
@@ -77,6 +81,7 @@ spec:
         image: nats-streaming
         ports:
         - containerPort: 4222
+        imagePullPolicy: Always
 ---
   apiVersion: apps/v1
   kind: Deployment
@@ -96,6 +101,7 @@ spec:
           image: frlnbrg/algorithm_query_store
           ports:
           - containerPort: 50051
+          imagePullPolicy: Always
 ---
 apiVersion: apps/v1
 kind: Deployment
@@ -113,5 +119,6 @@ spec:
       containers:
       - name: algorithm-sync-worker
         image: frlnbrg/algorithm_sync_worker
+      imagePullPolicy: Always
 
   
