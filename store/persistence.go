@@ -37,7 +37,9 @@ func (db postgresDB) add(event *pb.Event) error {
 		event.AggregateType,
 		event.EventData,
 		event.Channel)
-	if res, err := con.Exec("INSERT INTO log.commands VALUES(" + eventString + ")"); err != nil {
+	sql := "INSERT INTO log.commands VALUES(" + eventString + ")"
+	log.Println("executing: ", eventString)
+	if res, err := con.Exec(sql); err != nil {
 		log.Println("Failed to persist to DB", err)
 	} else {
 		log.Println("persisted event to DB", res)
