@@ -7,7 +7,6 @@ spec:
     app: algorithm-api
   ports:
   - port: 3000
-    targetPort: 30080
   type: LoadBalancer
 ---
 kind: Service
