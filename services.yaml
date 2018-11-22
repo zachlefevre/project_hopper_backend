@@ -7,8 +7,8 @@ spec:
     app: algorithm-api
   ports:
   - port: 3000
-    nodePort: 30080
-  type: NodePort
+    targetPort: 30080
+  type: LoadBalancer
 ---
 kind: Service
 apiVersion: v1
