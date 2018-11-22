@@ -10,7 +10,7 @@ import (
 )
 
 const (
-	dbAddress = "event-db:26257"
+	connectionstring = "postgresql://grace@" + dbAddress + "/?sslmode=disable"
 )
 
 type persistence interface {
@@ -34,18 +34,19 @@ func (db postgresDB) getAll() []*pb.Event {
 
 func (db postgresDB) init() {
 	log.Printf("initializing DB")
-	con, err := sql.Open("postgres", "postgresql://grace@"+dbAddress+"/?sslmode=disable")
+	con, err := sql.Open("postgres", connectionstring)
 	defer con.Close()
 	if err != nil {
 		log.Fatal("error connecting to the command DB: ", err)
 	}
-
+	log.Printf("Checking if log database exists")
 	if res, err := con.Exec(
 		"CREATE DATABASE IF NOT EXISTS log"); err != nil {
 		log.Fatal("cannot create database: ", err)
 	} else {
 		log.Printf("created database", res)
 	}
+	log.Printf("Checking if commands db exists")
 	if res, err := con.Exec(
 		"CREATE TABLE IF NOT EXISTS log.commands (id INT PRIMARY KEY, balance INT)"); err != nil {
 		log.Fatal("cannot create table: ", err)
