@@ -2,6 +2,7 @@ package store
 
 import (
 	"database/sql"
+	"fmt"
 	"log"
 
 	_ "github.com/lib/pq"
@@ -24,6 +25,23 @@ type postgresDB struct {
 
 func (db postgresDB) add(event *pb.Event) error {
 	log.Printf("Adding event to DB", event)
+	con, err := sql.Open("postgres", connectionstring)
+	defer con.Close()
+	if err != nil {
+		log.Fatal("Failed to open DB connection")
+	}
+	eventString := fmt.Sprintf("%v, %v, %v, %v, %v, %v",
+		event.EventId,
+		event.EventType,
+		event.AggregateId,
+		event.AggregateType,
+		event.EventData,
+		event.Channel)
+	if res, err := con.Exec("INSERT INTO log.commands VALUES(" + eventString + ")"); err != nil {
+		log.Printf("Failed to persist to DB", err)
+	} else {
+		log.Printf("persisted event to DB", res)
+	}
 	return nil
 }
 
@@ -44,11 +62,11 @@ func (db postgresDB) init() {
 		"CREATE DATABASE IF NOT EXISTS log"); err != nil {
 		log.Fatal("cannot create database: ", err)
 	} else {
-		log.Printf("created database", res)
+		log.Println("created database", res)
 	}
 	log.Printf("Checking if commands db exists")
 	if res, err := con.Exec(
-		"CREATE TABLE IF NOT EXISTS log.commands (id INT PRIMARY KEY, balance INT)"); err != nil {
+		"CREATE TABLE IF NOT EXISTS log.commands (id INT PRIMARY KEY, string event_type, string aggregate_id, string aggregate_type, string event_data, string channel)"); err != nil {
 		log.Fatal("cannot create table: ", err)
 	} else {
 		log.Printf("created table", res)
