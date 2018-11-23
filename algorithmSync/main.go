@@ -48,7 +48,7 @@ func main() {
 	go func() {
 		sc.Subscribe(createChannel, func(msg *stan.Msg) {
 			msg.Ack()
-			log.Printf("algorithm sync heard ", msg.Data)
+			log.Println("algorithm sync heard ", msg.Data)
 			createCmd := pb.CreateAlgorithmCommand{}
 			err := json.Unmarshal(msg.Data, &createCmd)
 			if err != nil {
@@ -56,9 +56,11 @@ func main() {
 				return
 			}
 
-			persistToQueryStore(&createCmd)
+			if err = persistToQueryStore(&createCmd); err != nil {
+				log.Println("failed to persist to query store", err)
+			}
 			if err := createAlgorithmCreatedEvent(&createCmd); err != nil {
-
+				log.Println("failed to create algorithm created event", err)
 			}
 		}, stan.DurableName(durableID),
 			stan.MaxInflight(25),
