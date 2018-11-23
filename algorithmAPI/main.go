@@ -33,6 +33,7 @@ func initRoutes() *mux.Router {
 	router := mux.NewRouter()
 	router.HandleFunc("/api/algorithms", createAlgorithm).Methods("POST")
 	router.HandleFunc("/api/algorithms", getAlgorithm).Methods("GET")
+	router.HandleFunc("/api/algorithms/file", createFile).Methods("POST")
 	router.HandleFunc("/api", sig).Methods("GET")
 	return router
 }
@@ -67,7 +68,6 @@ func createAlgorithm(w http.ResponseWriter, r *http.Request) {
 	j, _ := json.Marshal(resp)
 	w.Write(j)
 }
-
 func createAlgorithmRPC(cmd *pb.CreateAlgorithmCommand) (*pb.Algorithm, error) {
 	conn, err := grpc.Dial(grpcURI, grpc.WithInsecure())
 	if err != nil {
@@ -78,7 +78,6 @@ func createAlgorithmRPC(cmd *pb.CreateAlgorithmCommand) (*pb.Algorithm, error) {
 	client := pb.NewAlgorithmAggregateClient(conn)
 	return client.CreateAlgorithm(context.Background(), cmd)
 }
-
 func getAlgorithm(w http.ResponseWriter, r *http.Request) {
 	var algo pb.Algorithm
 	err := json.NewDecoder(r.Body).Decode(&algo)
@@ -108,7 +107,6 @@ func getAlgorithm(w http.ResponseWriter, r *http.Request) {
 	j, _ := json.Marshal(resp)
 	w.Write(j)
 }
-
 func getAlgorithmRPC(query *pb.GetAlgorithmQuery) (*pb.Algorithm, error) {
 	conn, err := grpc.Dial(grpcURI, grpc.WithInsecure())
 	if err != nil {
@@ -118,4 +116,6 @@ func getAlgorithmRPC(query *pb.GetAlgorithmQuery) (*pb.Algorithm, error) {
 
 	client := pb.NewAlgorithmAggregateClient(conn)
 	return client.GetAlgorithm(context.Background(), query)
+}
+func createFile(w http.ResponseWriter, r *http.Request) {
 }

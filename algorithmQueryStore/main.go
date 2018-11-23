@@ -6,6 +6,8 @@ import (
 	"fmt"
 	"log"
 	"net"
+	"strconv"
+	"strings"
 
 	"google.golang.org/grpc"
 
@@ -41,10 +43,20 @@ func (s store) CreateAlgorithm(ctx context.Context, algo *pb.Algorithm) (*pb.Alg
 		log.Fatal("error connecting to the database: ", err)
 	}
 
-	algoString := fmt.Sprintf("'%v', '%v', '%v', 'Created', NULL, NULL",
+	var fileIDs []string
+	var datasetIDs []string
+	for _, id := range algo.FileIDs {
+		fileIDs = append(fileIDs, strconv.Quote(id))
+	}
+	for _, id := range algo.DatasetIDs {
+		datasetIDs = append(datasetIDs, strconv.Quote(id))
+	}
+	algoString := fmt.Sprintf("'%v', '%v', '%v', 'Created', ARRAY[%v], ARRAY[%v]",
 		algo.Id,
 		algo.Name,
-		algo.Version)
+		algo.Version,
+		strings.Join(fileIDs, ","),
+		strings.Join(datasetIDs, ","))
 	sql := "INSERT INTO algorithm.algos VALUES (" + algoString + ")"
 	log.Println("executing: ", sql)
 
