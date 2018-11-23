@@ -118,4 +118,27 @@ func getAlgorithmRPC(query *pb.GetAlgorithmQuery) (*pb.Algorithm, error) {
 	return client.GetAlgorithm(context.Background(), query)
 }
 func createFile(w http.ResponseWriter, r *http.Request) {
+	w.Header().Set("Content-Type", "application/json")
+	algo := r.URL.Query().Get("version")
+	if algo == "" {
+		w.WriteHeader(http.StatusNotFound)
+	}
+	log.Printf(algo)
+	file, header, err := r.FormFile("file")
+	if err != nil {
+		log.Print(err)
+		http.Error(w, "File upload failed", 500)
+		return
+	}
+	defer file.Close()
+	mimeType := header.Header.Get("Content-Type")
+	switch mimeType {
+	case "image/jpeg":
+		log.Println(file)
+	case "image/png":
+		log.Println(file)
+	default:
+		log.Print(err)
+		http.Error(w, "File type unsupported", 500)
+	}
 }
