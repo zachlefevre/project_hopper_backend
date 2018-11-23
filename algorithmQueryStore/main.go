@@ -55,11 +55,7 @@ func (s store) CreateAlgorithm(ctx context.Context, algo *pb.Algorithm) (*pb.Alg
 		log.Println("Persisted algorithm to db: ", resp)
 	}
 
-	return &pb.Algorithm{
-		Name:    "tst",
-		Version: "v0",
-		Status:  "",
-	}, nil
+	return algo, nil
 }
 
 func main() {
