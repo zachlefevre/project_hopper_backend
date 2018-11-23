@@ -3,6 +3,7 @@ package main
 import (
 	"context"
 	"database/sql"
+	"fmt"
 	"log"
 	"net"
 
@@ -33,6 +34,28 @@ func (s store) GetAlgorithm(ctx context.Context, algo *pb.Algorithm) (*pb.Algori
 }
 func (s store) CreateAlgorithm(ctx context.Context, algo *pb.Algorithm) (*pb.Algorithm, error) {
 	log.Print("query store: create algorithm request")
+
+	db, err := sql.Open("postgres", connectionstring)
+	defer db.Close()
+	if err != nil {
+		log.Fatal("error connecting to the database: ", err)
+	}
+
+	algoString := fmt.Sprintf("'%v', '%v', '%v', '%v', NULL, NULL",
+		algo.Id,
+		algo.Name,
+		algo.Version,
+		algo.Status)
+	sql := "INSERT INTO algorithm.algos VALUES (" + algoString + ")"
+	log.Println("executing: ", sql)
+
+	if resp, err := db.Exec(
+		sql); err != nil {
+		log.Fatal("Failed to persist algo to db", err)
+	} else {
+		log.Println("Persisted algorithm to db: ", resp)
+	}
+
 	return &pb.Algorithm{
 		Name:    "tst",
 		Version: "v0",
@@ -68,7 +91,13 @@ func initDB() {
 	}
 
 	if resp, err := db.Exec(
-		"CREATE TABLE IF NOT EXISTS algorithm.algos (id INT PRIMARY KEY, balance INT)"); err != nil {
+		`CREATE TABLE IF NOT EXISTS algorithm.algos
+		(id UUID PRIMARY KEY,
+			name STRING,
+			version STRING,
+			status STRING,
+			fileIDs STRING[],
+			datasetIDs STRING[])`); err != nil {
 		log.Fatal(err)
 	} else {
 		log.Println("Created table: ", resp)
