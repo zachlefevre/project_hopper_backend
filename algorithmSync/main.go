@@ -21,7 +21,7 @@ const (
 	baseClientID  = "algorithm-repository"
 	clusterID     = "test-cluster"
 	createChannel = "create-algorithm"
-	grpcURI       = "store:50051"
+	eventstoreURI = "eventstore:50051"
 	addedEvent    = "algorithm-added-to-query-store"
 	aggregate     = "Alorithm"
 	durableID     = "algorithm-repository-durable"
@@ -75,23 +75,24 @@ func main() {
 }
 
 func createAlgorithmCreatedEvent(createCmd *pb.CreateAlgorithmCommand) error {
-	conn, err := grpc.Dial(grpcURI, grpc.WithInsecure())
+	conn, err := grpc.Dial(eventstoreURI, grpc.WithInsecure())
 	if err != nil {
 		log.Fatalf("Unable to connect: %v", err)
 	}
 	defer conn.Close()
 	client := pb.NewEventStoreClient(conn)
+
 	eventID, _ := uuid.NewV4()
 	createdEvent := pb.AlgorithmCreatedEvent{
 		Algorithm: createCmd.Algorithm,
 		Id:        eventID.String(),
 	}
+	log.Println("Creating created event", addedEvent)
 	createdEventJSON, _ := json.Marshal(createdEvent)
 	eid, _ := uuid.NewV4()
 	event := &pb.Event{
 		EventId:       eid.String(),
 		EventType:     addedEvent,
-		AggregateId:   createdEvent.Id,
 		AggregateType: aggregate,
 		EventData:     string(createdEventJSON),
 		Channel:       addedEvent,
