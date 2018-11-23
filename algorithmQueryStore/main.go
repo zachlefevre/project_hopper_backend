@@ -41,11 +41,10 @@ func (s store) CreateAlgorithm(ctx context.Context, algo *pb.Algorithm) (*pb.Alg
 		log.Fatal("error connecting to the database: ", err)
 	}
 
-	algoString := fmt.Sprintf("'%v', '%v', '%v', '%v', NULL, NULL",
+	algoString := fmt.Sprintf("'%v', '%v', '%v', 'Created', NULL, NULL",
 		algo.Id,
 		algo.Name,
-		algo.Version,
-		algo.Status)
+		algo.Version)
 	sql := "INSERT INTO algorithm.algos VALUES (" + algoString + ")"
 	log.Println("executing: ", sql)
 
