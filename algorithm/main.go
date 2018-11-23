@@ -37,11 +37,6 @@ func (a *AlgoServer) CreateAlgorithm(ctx context.Context, cmd *pb.CreateAlgorith
 		conn, err = grpc.Dial(eventStoreURI, grpc.WithInsecure())
 	}
 
-	for _, f := range cmd.Algorithm.Files {
-		fileID, _ := uuid.NewV4()
-		f.Id = fileID.String()
-	}
-
 	algoID, _ := uuid.NewV4()
 	cmd.Algorithm.Id = algoID.String()
 	eventID, _ := uuid.NewV4()
@@ -53,9 +48,8 @@ func (a *AlgoServer) CreateAlgorithm(ctx context.Context, cmd *pb.CreateAlgorith
 		EventData:     string(cmdJSON),
 		Channel:       createAlgorithmChannel,
 	}
-	log.Println("generating new client")
 	client := pb.NewEventStoreClient(conn)
-	log.Println("sending event")
+	log.Println("Algorithm Aggregate: Sending Event")
 	response, err := client.CreateEvent(ctx, event)
 
 	if err != nil {

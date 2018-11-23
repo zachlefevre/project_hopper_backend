@@ -12,7 +12,8 @@ import (
 )
 
 const (
-	port = ":50051"
+	port             = ":50051"
+	connectionstring = "postgresql://root@cockroachdb-public:26257/?sslmode=disable"
 )
 
 type store struct {
@@ -21,10 +22,12 @@ type store struct {
 func (s store) GetAlgorithm(ctx context.Context, algo *pb.Algorithm) (*pb.Algorithm, error) {
 	log.Print("query store: query algorithm request")
 	return &pb.Algorithm{
-		Name:    algo.Name + "but better",
-		Version: algo.Version,
-		Status:  "created",
-		Files:   nil,
+		Name:       algo.Name + " but better",
+		Version:    algo.Version,
+		Id:         algo.Id,
+		Status:     "created",
+		FileIDs:    nil,
+		DatasetIDs: nil,
 	}, nil
 }
 func (s store) CreateAlgorithm(ctx context.Context, algo *pb.Algorithm) (*pb.Algorithm, error) {
@@ -33,7 +36,6 @@ func (s store) CreateAlgorithm(ctx context.Context, algo *pb.Algorithm) (*pb.Alg
 		Name:    "tst",
 		Version: "v0",
 		Status:  "",
-		Files:   nil,
 	}, nil
 }
 
@@ -51,15 +53,24 @@ func main() {
 }
 
 func initDB() {
-	db, err := sql.Open("postgres", "postgresql://grace@localhost:26257/algorithms?sslmode=disable")
+	db, err := sql.Open("postgres", connectionstring)
 	defer db.Close()
 	if err != nil {
 		log.Fatal("error connecting to the database: ", err)
 	}
 
 	//Create the table
-	if _, err := db.Exec(
-		"CREATE TABLE IF NOT EXISTS algorithm (id INT PRIMARY KEY, balance INT)"); err != nil {
+	if resp, err := db.Exec(
+		"CREATE DATABASE IF NOT EXISTS algorithm"); err != nil {
 		log.Fatal(err)
+	} else {
+		log.Println("Created Database: ", resp)
+	}
+
+	if _, err := db.Exec(
+		"CREATE TABLE IF NOT EXISTS algorithm.algos (id INT PRIMARY KEY, balance INT)"); err != nil {
+		log.Fatal(err)
+	} else {
+		log.Println("Created table: ", resp)
 	}
 }
