@@ -59,14 +59,12 @@ func (db postgresDB) init() {
 	if err != nil {
 		log.Fatal("error connecting to the command DB: ", err)
 	}
-	log.Printf("Checking if log database exists")
 	if res, err := con.Exec(
 		"CREATE DATABASE IF NOT EXISTS log"); err != nil {
 		log.Fatal("cannot create database: ", err)
 	} else {
 		log.Println("created database", res)
 	}
-	log.Printf("Checking if commands db exists")
 	if res, err := con.Exec(
 		"CREATE TABLE IF NOT EXISTS log.commands (id UUID PRIMARY KEY, event_type STRING, aggregate_id STRING, aggregate_type STRING, event_data STRING, channel STRING)"); err != nil {
 		log.Fatal("cannot create table: ", err)

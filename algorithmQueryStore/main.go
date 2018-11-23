@@ -8,6 +8,7 @@ import (
 
 	"google.golang.org/grpc"
 
+	_ "github.com/lib/pq"
 	"github.com/zachlefevre/project_hopper_backend/com"
 )
 
@@ -59,7 +60,6 @@ func initDB() {
 		log.Fatal("error connecting to the database: ", err)
 	}
 
-	//Create the table
 	if resp, err := db.Exec(
 		"CREATE DATABASE IF NOT EXISTS algorithm"); err != nil {
 		log.Fatal(err)
