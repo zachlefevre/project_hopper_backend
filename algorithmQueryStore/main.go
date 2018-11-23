@@ -6,7 +6,6 @@ import (
 	"fmt"
 	"log"
 	"net"
-	"strconv"
 	"strings"
 
 	"google.golang.org/grpc"
@@ -46,10 +45,10 @@ func (s store) CreateAlgorithm(ctx context.Context, algo *pb.Algorithm) (*pb.Alg
 	var fileIDs []string
 	var datasetIDs []string
 	for _, id := range algo.FileIDs {
-		fileIDs = append(fileIDs, strconv.Quote(id))
+		fileIDs = append(fileIDs, `'`+id+`'`)
 	}
 	for _, id := range algo.DatasetIDs {
-		datasetIDs = append(datasetIDs, strconv.Quote(id))
+		datasetIDs = append(datasetIDs, `'`+id+`'`)
 	}
 	algoString := fmt.Sprintf("'%v', '%v', '%v', 'Created', ARRAY[%v], ARRAY[%v]",
 		algo.Id,
