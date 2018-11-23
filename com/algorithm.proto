@@ -27,12 +27,6 @@ message Algorithm{
     repeated string datasetIDs = 6;
 }
 
-message AlgorithmFile {
-    string fileType = 1;
-    string fileName = 2;
-    string id = 3;
-}   
-
 service AlgorithmQueryStore{
     rpc GetAlgorithm(Algorithm) returns (Algorithm) {}
     rpc CreateAlgorithm(Algorithm) returns (Algorithm){}
@@ -42,9 +36,4 @@ service AlgorithmQueryStore{
 message AlgorithmCreatedEvent{
     Algorithm algorithm = 1;
     string id = 2;
-}
-
-message AlgorithmAssociatedWithDatasetEvent{
-    Algorithm algorithm = 1;
-    string id = 3;
 }
