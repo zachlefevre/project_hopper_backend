@@ -15,9 +15,8 @@ import (
 )
 
 const (
-	createdEvent = "create-algorithm"
-	aggregate    = "algorithm"
-	grpcURI      = "algorithm-aggregate:50051"
+	aggregate = "algorithm"
+	grpcURI   = "algorithm-aggregate:50051"
 )
 
 func main() {

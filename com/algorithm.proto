@@ -21,8 +21,8 @@ message Algorithm{
     string version = 2;
     string id = 3;
     string status = 4; 
-    repeated AlgorithmFile files = 5;
-    
+    repeated string fileIDs = 5;
+    repeated string datasetIDs = 6;
 }
 
 //Commands

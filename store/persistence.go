@@ -30,7 +30,7 @@ func (db postgresDB) add(event *pb.Event) error {
 	if err != nil {
 		log.Fatal("Failed to open DB connection")
 	}
-	eventString := fmt.Sprintf("'%v', '%v', '%v', '%v', '%v', '%v'",
+	eventString := fmt.Sprintf("%v, '%v', '%v', '%v', '%v', '%v'",
 		event.EventId,
 		event.EventType,
 		event.AggregateId,
@@ -68,7 +68,7 @@ func (db postgresDB) init() {
 	}
 	log.Printf("Checking if commands db exists")
 	if res, err := con.Exec(
-		"CREATE TABLE IF NOT EXISTS log.commands (id STRING PRIMARY KEY, event_type STRING, aggregate_id STRING, aggregate_type STRING, event_data STRING, channel STRING)"); err != nil {
+		"CREATE TABLE IF NOT EXISTS log.commands (id UUID PRIMARY KEY, event_type STRING, aggregate_id STRING, aggregate_type STRING, event_data STRING, channel STRING)"); err != nil {
 		log.Fatal("cannot create table: ", err)
 	} else {
 		log.Println("created table", res)
