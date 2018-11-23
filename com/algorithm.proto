@@ -5,16 +5,18 @@ service AlgorithmAggregate{
     rpc CreateAlgorithm(CreateAlgorithmCommand) returns (Algorithm){}
     rpc GetAlgorithm(GetAlgorithmQuery) returns (Algorithm) {}
 }
-service AlgorithmQueryStore{
-    rpc GetAlgorithm(Algorithm) returns (Algorithm) {}
-    rpc CreateAlgorithm(Algorithm) returns (Algorithm){}
+
+message CreateAlgorithmCommand{
+    Algorithm algorithm = 1;
+    int64 createdOn = 2;
+    string id = 3;
 }
 
-message AlgorithmFile {
-    string fileType = 1;
-    string fileName = 2;
+message GetAlgorithmQuery{
+    Algorithm algorithm = 1;
+    int64 createdOn = 2;
     string id = 3;
-}   
+}
 
 message Algorithm{
     string name = 1;
@@ -25,21 +27,15 @@ message Algorithm{
     repeated string datasetIDs = 6;
 }
 
-//Commands
-message CreateAlgorithmCommand{
-    Algorithm algorithm = 1;
-    int64 createdOn = 2;
+message AlgorithmFile {
+    string fileType = 1;
+    string fileName = 2;
     string id = 3;
-}
+}   
 
-//Queries
-message GetAlgorithmQuery{
-    Algorithm algorithm = 1;
-    int64 createdOn = 2;
-    string id = 3;
-}
-
-message AssociateAlgorithmWithDatasetCommand{       
+service AlgorithmQueryStore{
+    rpc GetAlgorithm(Algorithm) returns (Algorithm) {}
+    rpc CreateAlgorithm(Algorithm) returns (Algorithm){}
 }
 
 //Events
@@ -47,6 +43,7 @@ message AlgorithmCreatedEvent{
     Algorithm algorithm = 1;
     string id = 2;
 }
+
 message AlgorithmAssociatedWithDatasetEvent{
     Algorithm algorithm = 1;
     string id = 3;
