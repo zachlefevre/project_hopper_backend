@@ -67,7 +67,7 @@ func initDB() {
 		log.Println("Created Database: ", resp)
 	}
 
-	if _, err := db.Exec(
+	if resp, err := db.Exec(
 		"CREATE TABLE IF NOT EXISTS algorithm.algos (id INT PRIMARY KEY, balance INT)"); err != nil {
 		log.Fatal(err)
 	} else {
