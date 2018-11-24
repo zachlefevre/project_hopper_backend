@@ -109,6 +109,17 @@ func initDB() {
 			datasetIDs STRING[])`); err != nil {
 		log.Fatal(err)
 	} else {
-		log.Println("Created table: ", resp)
+		log.Println("Created algorithm table: ", resp)
+	}
+
+	if resp, err := db.Exec(
+		`CREATE TABLE IF NOT EXISTS algorithm.files
+		(id UUID PRIMARY KEY,
+			content STRING,
+			name STRING,
+			type STRING)`); err != nil {
+		log.Fatal(err)
+	} else {
+		log.Println("Created file table: ", resp)
 	}
 }
