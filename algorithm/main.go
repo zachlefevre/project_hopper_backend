@@ -76,6 +76,38 @@ func (a *AlgoServer) GetAlgorithm(ctx context.Context, qry *pb.GetAlgorithmQuery
 	}
 	return response, nil
 }
+func (a *AlgoServer) AssociateFile(ctx context.Context, cmd *pb.AssociateFileCommand) (*pb.Algorithm, error) {
+	log.Printf("Algorithm File Association Request Recieved: ", cmd)
+	var conn *grpc.ClientConn
+	var err error
+	for conn, err = grpc.Dial(eventStoreURI, grpc.WithInsecure()); err != nil; time.Sleep(time.Second * 5) {
+		log.Printf(eventStoreURI + " is not available. Trying again")
+		conn, err = grpc.Dial(eventStoreURI, grpc.WithInsecure())
+	}
+
+	fileID, _ := uuid.NewV4()
+	cmd.AlgorithmFile.Id = fileID.String()
+	eventID, _ := uuid.NewV4()
+	cmdJSON, _ := json.Marshal(cmd)
+	event := &pb.Event{
+		EventId:       eventID.String(),
+		EventType:     createAlgorithmChannel,
+		AggregateType: aggregate,
+		EventData:     string(cmdJSON),
+		Channel:       createAlgorithmChannel,
+	}
+	client := pb.NewEventStoreClient(conn)
+	log.Println("Algorithm Aggregate: Sending Event")
+	response, err := client.CreateEvent(ctx, event)
+
+	if err != nil {
+		return nil, errors.Wrap(err, "Failed to add to event store")
+	}
+	if !response.IsSuccessful {
+		return nil, errors.Wrap(err, "Failed to add to event store")
+	}
+	return cmd.Algorithm, nil
+}
 
 func main() {
 	lis, err := net.Listen("tcp", port)

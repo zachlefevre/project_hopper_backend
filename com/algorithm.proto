@@ -32,10 +32,12 @@ message Algorithm{
     repeated string fileIDs = 5;
     repeated string datasetIDs = 6;
 }
+
 message AlgorithmFile{
     bytes content = 1;
     string name = 2;
     string filetype = 3;
+    string id = 4;
 }
 service AlgorithmQueryStore{
     rpc GetAlgorithm(Algorithm) returns (Algorithm) {}
