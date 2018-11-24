@@ -33,8 +33,7 @@ func initRoutes() *mux.Router {
 	router := mux.NewRouter()
 	router.HandleFunc("/api/algorithms", createAlgorithm).Methods("POST")
 	router.HandleFunc("/api/algorithms", getAlgorithm).Methods("GET")
-	router.HandleFunc("/api/algorithms/file", createFile).Methods("POST")
-	router.HandleFunc("/api/algorithms/", addFile).Methods("POST")
+	router.HandleFunc("/api/algorithms/file", addFile).Methods("POST")
 	router.HandleFunc("/api", sig).Methods("GET")
 	return router
 }
@@ -146,9 +145,55 @@ func createFile(w http.ResponseWriter, r *http.Request) {
 
 func addFile(w http.ResponseWriter, r *http.Request) {
 	w.Header().Set("Content-Type", "application/json")
-	algo := r.URL.Query().Get("algorithm")
-	if algo == "" {
+	algoName := r.URL.Query().Get("algorithm")
+	version := r.URL.Query().Get("version")
+	if algoName == "" {
+		w.WriteHeader(http.StatusNotFound)
+	}
+	if version == "" {
 		w.WriteHeader(http.StatusNotFound)
 	}
 
+	queryID, _ := uuid.NewV4()
+	getQuery := pb.GetAlgorithmQuery{
+		Algorithm: &pb.Algorithm{
+			Name:    algoName,
+			Version: version,
+		},
+		CreatedOn: time.Now().Unix(),
+		Id:        queryID.String(),
+	}
+	algo, err := getAlgorithmRPC(&getQuery)
+	if err != nil {
+		log.Print(err)
+		http.Error(w, "Failed to get algorithm", 500)
+		return
+	}
+
+	var file pb.AlgorithmFile
+	err = json.NewDecoder(r.Body).Decode(&file)
+	if err != nil {
+		http.Error(w, "Invalid file", 500)
+		return
+	}
+
+	addFileCmd := pb.AssociateFileCommand{
+		Algorithm:     algo,
+		AlgorithmFile: &file,
+	}
+	resp, err := addFileRPC(&addFileCmd)
+	w.Header().Set("Content-Type", "application/json")
+	w.WriteHeader(http.StatusCreated)
+	j, _ := json.Marshal(resp)
+	w.Write(j)
+}
+func addFileRPC(cmd *pb.AssociateFileCommand) (*pb.Algorithm, error) {
+	conn, err := grpc.Dial(grpcURI, grpc.WithInsecure())
+	if err != nil {
+		log.Fatalf("Unable to connect: %v", err)
+	}
+	defer conn.Close()
+
+	client := pb.NewAlgorithmAggregateClient(conn)
+	return client.AssociateFile(context.Background(), cmd)
 }
