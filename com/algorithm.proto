@@ -29,6 +29,7 @@ message Algorithm{
 
 service AlgorithmQueryStore{
     rpc GetAlgorithm(Algorithm) returns (Algorithm) {}
+    rpc GetAlgorithms(Algorithm) returns (MultipleAlgorithms) {}
     rpc CreateAlgorithm(Algorithm) returns (Algorithm){}
 }
 
@@ -36,4 +37,7 @@ service AlgorithmQueryStore{
 message AlgorithmCreatedEvent{
     Algorithm algorithm = 1;
     string id = 2;
+}
+message MultipleAlgorithms{
+    repeated Algorithm algorithms = 1;
 }
