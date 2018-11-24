@@ -33,6 +33,9 @@ func (s store) GetAlgorithm(ctx context.Context, algo *pb.Algorithm) (*pb.Algori
 		DatasetIDs: nil,
 	}, nil
 }
+func (s store) GetAlgorithms(ctx context.Context, algo *pb.Algorithm) (*pb.MultipleAlgorithms, error) {
+	return nil, nil
+}
 func (s store) CreateAlgorithm(ctx context.Context, algo *pb.Algorithm) (*pb.Algorithm, error) {
 	log.Print("query store: create algorithm request")
 
