@@ -21,7 +21,7 @@ const (
 
 func main() {
 	server := &http.Server{
-		Addr:    ":3000",
+		Addr:    ":80",
 		Handler: initRoutes(),
 	}
 	log.Println("Http Server Listening...")
