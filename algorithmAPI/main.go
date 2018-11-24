@@ -2,6 +2,7 @@ package main
 
 import (
 	"fmt"
+	"strings"
 
 	"context"
 	"encoding/json"
@@ -152,7 +153,13 @@ func addFile(w http.ResponseWriter, r *http.Request) {
 		http.Error(w, "Failed to read file", 500)
 		return
 	}
-
+	log.Println(handler.Header)
+	log.Println(handler.Header.Get("Content-Disposition"))
+	cd := strings.Split(handler.Header.Get("Content-Disposition"), "; ")
+	nameSection := cd[2]
+	log.Println(cd, nameSection)
+	name := strings.Split(nameSection, "=")[1]
+	log.Println(name)
 	queryID, _ := uuid.NewV4()
 	getQuery := pb.GetAlgorithmQuery{
 		Algorithm: &pb.Algorithm{
@@ -168,10 +175,10 @@ func addFile(w http.ResponseWriter, r *http.Request) {
 		http.Error(w, "Failed to get algorithm", 500)
 		return
 	}
-
+	log.Println(handler.Header)
 	algoFile := pb.AlgorithmFile{
 		Content:  string(fileContent),
-		Name:     handler.Header.Get("filename"),
+		Name:     name,
 		Filetype: handler.Header.Get("Content-Type"),
 	}
 
