@@ -34,6 +34,7 @@ func initRoutes() *mux.Router {
 	router.HandleFunc("/api/algorithms", createAlgorithm).Methods("POST")
 	router.HandleFunc("/api/algorithms", getAlgorithm).Methods("GET")
 	router.HandleFunc("/api/algorithms/file", createFile).Methods("POST")
+	router.HandleFunc("/api/algorithms/", addFile).Methods("POST")
 	router.HandleFunc("/api", sig).Methods("GET")
 	return router
 }
@@ -141,4 +142,13 @@ func createFile(w http.ResponseWriter, r *http.Request) {
 		log.Print(err)
 		http.Error(w, "File type unsupported", 500)
 	}
+}
+
+func addFile(w http.ResponseWriter, r *http.Request) {
+	w.Header().Set("Content-Type", "application/json")
+	algo := r.URL.Query().Get("algorithm")
+	if algo == "" {
+		w.WriteHeader(http.StatusNotFound)
+	}
+
 }

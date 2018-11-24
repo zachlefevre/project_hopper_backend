@@ -6,6 +6,8 @@ package pb
 import (
 	fmt "fmt"
 	proto "github.com/golang/protobuf/proto"
+	context "golang.org/x/net/context"
+	grpc "google.golang.org/grpc"
 	math "math"
 )
 
@@ -331,4 +333,239 @@ var fileDescriptor_8c381a4f1e580eed = []byte{
 	0xaf, 0x2e, 0x6c, 0xfb, 0x5f, 0x40, 0xbf, 0xda, 0x2f, 0x9b, 0x82, 0x51, 0x1e, 0xb6, 0xb7, 0xe7,
 	0x74, 0xf0, 0xb4, 0x3d, 0xf9, 0x0f, 0x66, 0x8b, 0x5e, 0xf1, 0xb1, 0x9d, 0x7d, 0x05, 0x00, 0x00,
 	0xff, 0xff, 0xef, 0xf2, 0x58, 0xb6, 0x7f, 0x03, 0x00, 0x00,
+}
+
+// Reference imports to suppress errors if they are not otherwise used.
+var _ context.Context
+var _ grpc.ClientConn
+
+// This is a compile-time assertion to ensure that this generated file
+// is compatible with the grpc package it is being compiled against.
+const _ = grpc.SupportPackageIsVersion4
+
+// AlgorithmAggregateClient is the client API for AlgorithmAggregate service.
+//
+// For semantics around ctx use and closing/ending streaming RPCs, please refer to https://godoc.org/google.golang.org/grpc#ClientConn.NewStream.
+type AlgorithmAggregateClient interface {
+	CreateAlgorithm(ctx context.Context, in *CreateAlgorithmCommand, opts ...grpc.CallOption) (*Algorithm, error)
+	GetAlgorithm(ctx context.Context, in *GetAlgorithmQuery, opts ...grpc.CallOption) (*Algorithm, error)
+}
+
+type algorithmAggregateClient struct {
+	cc *grpc.ClientConn
+}
+
+func NewAlgorithmAggregateClient(cc *grpc.ClientConn) AlgorithmAggregateClient {
+	return &algorithmAggregateClient{cc}
+}
+
+func (c *algorithmAggregateClient) CreateAlgorithm(ctx context.Context, in *CreateAlgorithmCommand, opts ...grpc.CallOption) (*Algorithm, error) {
+	out := new(Algorithm)
+	err := c.cc.Invoke(ctx, "/pb.AlgorithmAggregate/CreateAlgorithm", in, out, opts...)
+	if err != nil {
+		return nil, err
+	}
+	return out, nil
+}
+
+func (c *algorithmAggregateClient) GetAlgorithm(ctx context.Context, in *GetAlgorithmQuery, opts ...grpc.CallOption) (*Algorithm, error) {
+	out := new(Algorithm)
+	err := c.cc.Invoke(ctx, "/pb.AlgorithmAggregate/GetAlgorithm", in, out, opts...)
+	if err != nil {
+		return nil, err
+	}
+	return out, nil
+}
+
+// AlgorithmAggregateServer is the server API for AlgorithmAggregate service.
+type AlgorithmAggregateServer interface {
+	CreateAlgorithm(context.Context, *CreateAlgorithmCommand) (*Algorithm, error)
+	GetAlgorithm(context.Context, *GetAlgorithmQuery) (*Algorithm, error)
+}
+
+func RegisterAlgorithmAggregateServer(s *grpc.Server, srv AlgorithmAggregateServer) {
+	s.RegisterService(&_AlgorithmAggregate_serviceDesc, srv)
+}
+
+func _AlgorithmAggregate_CreateAlgorithm_Handler(srv interface{}, ctx context.Context, dec func(interface{}) error, interceptor grpc.UnaryServerInterceptor) (interface{}, error) {
+	in := new(CreateAlgorithmCommand)
+	if err := dec(in); err != nil {
+		return nil, err
+	}
+	if interceptor == nil {
+		return srv.(AlgorithmAggregateServer).CreateAlgorithm(ctx, in)
+	}
+	info := &grpc.UnaryServerInfo{
+		Server:     srv,
+		FullMethod: "/pb.AlgorithmAggregate/CreateAlgorithm",
+	}
+	handler := func(ctx context.Context, req interface{}) (interface{}, error) {
+		return srv.(AlgorithmAggregateServer).CreateAlgorithm(ctx, req.(*CreateAlgorithmCommand))
+	}
+	return interceptor(ctx, in, info, handler)
+}
+
+func _AlgorithmAggregate_GetAlgorithm_Handler(srv interface{}, ctx context.Context, dec func(interface{}) error, interceptor grpc.UnaryServerInterceptor) (interface{}, error) {
+	in := new(GetAlgorithmQuery)
+	if err := dec(in); err != nil {
+		return nil, err
+	}
+	if interceptor == nil {
+		return srv.(AlgorithmAggregateServer).GetAlgorithm(ctx, in)
+	}
+	info := &grpc.UnaryServerInfo{
+		Server:     srv,
+		FullMethod: "/pb.AlgorithmAggregate/GetAlgorithm",
+	}
+	handler := func(ctx context.Context, req interface{}) (interface{}, error) {
+		return srv.(AlgorithmAggregateServer).GetAlgorithm(ctx, req.(*GetAlgorithmQuery))
+	}
+	return interceptor(ctx, in, info, handler)
+}
+
+var _AlgorithmAggregate_serviceDesc = grpc.ServiceDesc{
+	ServiceName: "pb.AlgorithmAggregate",
+	HandlerType: (*AlgorithmAggregateServer)(nil),
+	Methods: []grpc.MethodDesc{
+		{
+			MethodName: "CreateAlgorithm",
+			Handler:    _AlgorithmAggregate_CreateAlgorithm_Handler,
+		},
+		{
+			MethodName: "GetAlgorithm",
+			Handler:    _AlgorithmAggregate_GetAlgorithm_Handler,
+		},
+	},
+	Streams:  []grpc.StreamDesc{},
+	Metadata: "algorithm.proto",
+}
+
+// AlgorithmQueryStoreClient is the client API for AlgorithmQueryStore service.
+//
+// For semantics around ctx use and closing/ending streaming RPCs, please refer to https://godoc.org/google.golang.org/grpc#ClientConn.NewStream.
+type AlgorithmQueryStoreClient interface {
+	GetAlgorithm(ctx context.Context, in *Algorithm, opts ...grpc.CallOption) (*Algorithm, error)
+	GetAlgorithms(ctx context.Context, in *Algorithm, opts ...grpc.CallOption) (*MultipleAlgorithms, error)
+	CreateAlgorithm(ctx context.Context, in *Algorithm, opts ...grpc.CallOption) (*Algorithm, error)
+}
+
+type algorithmQueryStoreClient struct {
+	cc *grpc.ClientConn
+}
+
+func NewAlgorithmQueryStoreClient(cc *grpc.ClientConn) AlgorithmQueryStoreClient {
+	return &algorithmQueryStoreClient{cc}
+}
+
+func (c *algorithmQueryStoreClient) GetAlgorithm(ctx context.Context, in *Algorithm, opts ...grpc.CallOption) (*Algorithm, error) {
+	out := new(Algorithm)
+	err := c.cc.Invoke(ctx, "/pb.AlgorithmQueryStore/GetAlgorithm", in, out, opts...)
+	if err != nil {
+		return nil, err
+	}
+	return out, nil
+}
+
+func (c *algorithmQueryStoreClient) GetAlgorithms(ctx context.Context, in *Algorithm, opts ...grpc.CallOption) (*MultipleAlgorithms, error) {
+	out := new(MultipleAlgorithms)
+	err := c.cc.Invoke(ctx, "/pb.AlgorithmQueryStore/GetAlgorithms", in, out, opts...)
+	if err != nil {
+		return nil, err
+	}
+	return out, nil
+}
+
+func (c *algorithmQueryStoreClient) CreateAlgorithm(ctx context.Context, in *Algorithm, opts ...grpc.CallOption) (*Algorithm, error) {
+	out := new(Algorithm)
+	err := c.cc.Invoke(ctx, "/pb.AlgorithmQueryStore/CreateAlgorithm", in, out, opts...)
+	if err != nil {
+		return nil, err
+	}
+	return out, nil
+}
+
+// AlgorithmQueryStoreServer is the server API for AlgorithmQueryStore service.
+type AlgorithmQueryStoreServer interface {
+	GetAlgorithm(context.Context, *Algorithm) (*Algorithm, error)
+	GetAlgorithms(context.Context, *Algorithm) (*MultipleAlgorithms, error)
+	CreateAlgorithm(context.Context, *Algorithm) (*Algorithm, error)
+}
+
+func RegisterAlgorithmQueryStoreServer(s *grpc.Server, srv AlgorithmQueryStoreServer) {
+	s.RegisterService(&_AlgorithmQueryStore_serviceDesc, srv)
+}
+
+func _AlgorithmQueryStore_GetAlgorithm_Handler(srv interface{}, ctx context.Context, dec func(interface{}) error, interceptor grpc.UnaryServerInterceptor) (interface{}, error) {
+	in := new(Algorithm)
+	if err := dec(in); err != nil {
+		return nil, err
+	}
+	if interceptor == nil {
+		return srv.(AlgorithmQueryStoreServer).GetAlgorithm(ctx, in)
+	}
+	info := &grpc.UnaryServerInfo{
+		Server:     srv,
+		FullMethod: "/pb.AlgorithmQueryStore/GetAlgorithm",
+	}
+	handler := func(ctx context.Context, req interface{}) (interface{}, error) {
+		return srv.(AlgorithmQueryStoreServer).GetAlgorithm(ctx, req.(*Algorithm))
+	}
+	return interceptor(ctx, in, info, handler)
+}
+
+func _AlgorithmQueryStore_GetAlgorithms_Handler(srv interface{}, ctx context.Context, dec func(interface{}) error, interceptor grpc.UnaryServerInterceptor) (interface{}, error) {
+	in := new(Algorithm)
+	if err := dec(in); err != nil {
+		return nil, err
+	}
+	if interceptor == nil {
+		return srv.(AlgorithmQueryStoreServer).GetAlgorithms(ctx, in)
+	}
+	info := &grpc.UnaryServerInfo{
+		Server:     srv,
+		FullMethod: "/pb.AlgorithmQueryStore/GetAlgorithms",
+	}
+	handler := func(ctx context.Context, req interface{}) (interface{}, error) {
+		return srv.(AlgorithmQueryStoreServer).GetAlgorithms(ctx, req.(*Algorithm))
+	}
+	return interceptor(ctx, in, info, handler)
+}
+
+func _AlgorithmQueryStore_CreateAlgorithm_Handler(srv interface{}, ctx context.Context, dec func(interface{}) error, interceptor grpc.UnaryServerInterceptor) (interface{}, error) {
+	in := new(Algorithm)
+	if err := dec(in); err != nil {
+		return nil, err
+	}
+	if interceptor == nil {
+		return srv.(AlgorithmQueryStoreServer).CreateAlgorithm(ctx, in)
+	}
+	info := &grpc.UnaryServerInfo{
+		Server:     srv,
+		FullMethod: "/pb.AlgorithmQueryStore/CreateAlgorithm",
+	}
+	handler := func(ctx context.Context, req interface{}) (interface{}, error) {
+		return srv.(AlgorithmQueryStoreServer).CreateAlgorithm(ctx, req.(*Algorithm))
+	}
+	return interceptor(ctx, in, info, handler)
+}
+
+var _AlgorithmQueryStore_serviceDesc = grpc.ServiceDesc{
+	ServiceName: "pb.AlgorithmQueryStore",
+	HandlerType: (*AlgorithmQueryStoreServer)(nil),
+	Methods: []grpc.MethodDesc{
+		{
+			MethodName: "GetAlgorithm",
+			Handler:    _AlgorithmQueryStore_GetAlgorithm_Handler,
+		},
+		{
+			MethodName: "GetAlgorithms",
+			Handler:    _AlgorithmQueryStore_GetAlgorithms_Handler,
+		},
+		{
+			MethodName: "CreateAlgorithm",
+			Handler:    _AlgorithmQueryStore_CreateAlgorithm_Handler,
+		},
+	},
+	Streams:  []grpc.StreamDesc{},
+	Metadata: "algorithm.proto",
 }
