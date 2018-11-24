@@ -190,11 +190,15 @@ func persistFileToQueryStore(cmd *pb.AssociateFileCommand) error {
 	if err != nil {
 		return errors.Wrap(err, "Unable to connect")
 	}
+	fileAndAlgorithm := &pb.AlgorithmAndFile{
+		File:      cmd.AlgorithmFile,
+		Algorithm: cmd.Algorithm,
+	}
 	queryStoreClient := pb.NewAlgorithmQueryStoreClient(conn)
-	added, err := queryStoreClient.CreateAlgorithm(context.Background(), cmd.Algorithm)
+	updated, err := queryStoreClient.AssociateFile(context.Background(), fileAndAlgorithm)
 	if err != nil {
 		return err
 	}
-	log.Println("persisted to query store: " + added.Id)
+	log.Println("persisted to query store: " + updated.Id)
 	return nil
 }
