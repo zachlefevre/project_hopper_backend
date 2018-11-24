@@ -2,8 +2,6 @@ package main
 
 import (
 	"fmt"
-	"io"
-	"os"
 
 	"context"
 	"encoding/json"
@@ -129,30 +127,6 @@ func getAlgorithmRPC(query *pb.GetAlgorithmQuery) (*pb.Algorithm, error) {
 	client := pb.NewAlgorithmAggregateClient(conn)
 	return client.GetAlgorithm(context.Background(), query)
 }
-func createFile(w http.ResponseWriter, r *http.Request) {
-	if r.Method == "POST" {
-		// Post
-		file, handler, err := r.FormFile("uploadfile")
-		if err != nil {
-			fmt.Println(err)
-			return
-		}
-		defer file.Close()
-
-		fmt.Fprintf(w, "%v", handler.Header)
-		f, err := os.OpenFile("./test/"+handler.Filename, os.O_WRONLY|os.O_CREATE, 0666)
-		if err != nil {
-			fmt.Println(err)
-			return
-		}
-		defer f.Close()
-
-		io.Copy(f, file)
-
-	} else {
-		fmt.Println("Unknown HTTP " + r.Method + "  Method")
-	}
-}
 
 func addFile(w http.ResponseWriter, r *http.Request) {
 	w.Header().Set("Content-Type", "application/json")
@@ -164,6 +138,15 @@ func addFile(w http.ResponseWriter, r *http.Request) {
 	if version == "" {
 		w.WriteHeader(http.StatusNotFound)
 	}
+
+	file, handler, err := r.FormFile("uploadfile")
+	if err != nil {
+		fmt.Println(err)
+		return
+	}
+	defer file.Close()
+
+	fmt.Fprintf(w, "%v", handler.Header)
 
 	queryID, _ := uuid.NewV4()
 	getQuery := pb.GetAlgorithmQuery{
@@ -180,17 +163,22 @@ func addFile(w http.ResponseWriter, r *http.Request) {
 		http.Error(w, "Failed to get algorithm", 500)
 		return
 	}
-
-	var file pb.AlgorithmFile
-	err = json.NewDecoder(r.Body).Decode(&file)
+	var fileContent []byte
+	_, err = file.Read(fileContent)
 	if err != nil {
-		http.Error(w, "Invalid file", 500)
+		log.Print(err)
+		http.Error(w, "Failed to read file", 500)
 		return
+	}
+	algoFile := pb.AlgorithmFile{
+		Content:  string(fileContent),
+		Name:     handler.Header.Get("filename"),
+		Filetype: handler.Header.Get("Content-Type"),
 	}
 
 	addFileCmd := pb.AssociateFileCommand{
 		Algorithm:     algo,
-		AlgorithmFile: &file,
+		AlgorithmFile: &algoFile,
 	}
 	resp, err := addFileRPC(&addFileCmd)
 	w.Header().Set("Content-Type", "application/json")
