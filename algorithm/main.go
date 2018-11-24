@@ -23,6 +23,7 @@ const (
 	queryStoreURI          = "querystore:50051"
 	createAlgorithmChannel = "create-algorithm"
 	aggregate              = "Algorithm"
+	associateFileChannel   = "associate-file"
 )
 
 type AlgoServer struct {
@@ -91,10 +92,10 @@ func (a *AlgoServer) AssociateFile(ctx context.Context, cmd *pb.AssociateFileCom
 	cmdJSON, _ := json.Marshal(cmd)
 	event := &pb.Event{
 		EventId:       eventID.String(),
-		EventType:     createAlgorithmChannel,
+		EventType:     associateFileChannel,
 		AggregateType: aggregate,
 		EventData:     string(cmdJSON),
-		Channel:       createAlgorithmChannel,
+		Channel:       associateFileChannel,
 	}
 	client := pb.NewEventStoreClient(conn)
 	log.Println("Algorithm Aggregate: Sending Event")
