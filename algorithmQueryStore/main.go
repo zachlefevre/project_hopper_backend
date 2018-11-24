@@ -93,7 +93,7 @@ func (s store) AssociateFile(ctx context.Context, pair *pb.AlgorithmAndFile) (*p
 	return pair.Algorithm, nil
 }
 func (s store) CreateFile(ctx context.Context, file *pb.AlgorithmFile) (*pb.AlgorithmFile, error) {
-	log.Print("query store: create algorithmFile request")
+	log.Print("query store: create algorithmFile request", file)
 
 	db, err := sql.Open("postgres", connectionstring)
 	defer db.Close()
@@ -106,7 +106,7 @@ func (s store) CreateFile(ctx context.Context, file *pb.AlgorithmFile) (*pb.Algo
 		file.Content,
 		file.Name,
 		file.Filetype)
-	sql := "INSERT INTO algorithm.algos VALUES (" + fileString + ")"
+	sql := "INSERT INTO algorithm.files VALUES (" + fileString + ")"
 	log.Println("executing: ", sql)
 
 	if resp, err := db.Exec(

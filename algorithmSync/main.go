@@ -26,6 +26,7 @@ const (
 	durableID            = "algorithm-repository-durable"
 	queryStoreURI        = "querystore:50051"
 	addedEvent           = "algorithm-added-to-query-store"
+	fileAssociatedEvent  = "algorithm-associated-with-file"
 	createChannel        = "create-algorithm"
 	fileAssociateChannel = "associate-file"
 )
@@ -58,7 +59,7 @@ func main() {
 			}
 
 			if err = persistAlgorithmToQueryStore(&createCmd); err != nil {
-				log.Println("failed to persist to query store", err)
+				log.Println("failed to persist algorithm to query store", err)
 			}
 			if err := createAlgorithmCreatedEvent(&createCmd); err != nil {
 				log.Println("failed to create algorithm created event", err)
@@ -74,7 +75,7 @@ func main() {
 	go func() {
 		sc.Subscribe(fileAssociateChannel, func(msg *stan.Msg) {
 			msg.Ack()
-			log.Println("algorithm sync heard ", msg.Data)
+			log.Println("file association sync heard ", msg.Data)
 			associationCmd := pb.AssociateFileCommand{}
 			err := json.Unmarshal(msg.Data, &associationCmd)
 			if err != nil {
@@ -83,10 +84,10 @@ func main() {
 			}
 
 			if err = associateFileInQueryStore(&associationCmd); err != nil {
-				log.Println("failed to persist to query store", err)
+				log.Println("failed to associate file query store", err)
 			}
 			if err = persistFileToQueryStore(&associationCmd); err != nil {
-				log.Println("failed to persist to query store", err)
+				log.Println("failed to persist file to query store", err)
 			}
 			if err := createFileCreatedEvent(&associationCmd); err != nil {
 				log.Println("failed to create file associated event", err)
@@ -164,14 +165,14 @@ func createFileCreatedEvent(createCmd *pb.AssociateFileCommand) error {
 		FileID:      createCmd.AlgorithmFile.Id,
 	}
 	log.Println("Creating created event", associatedEvent)
-	createdEventJSON, _ := json.Marshal(associatedEvent)
+	associatedEventJSON, _ := json.Marshal(associatedEvent)
 	eid, _ := uuid.NewV4()
 	event := &pb.Event{
 		EventId:       eid.String(),
-		EventType:     addedEvent,
+		EventType:     fileAssociatedEvent,
 		AggregateType: aggregate,
-		EventData:     string(createdEventJSON),
-		Channel:       addedEvent,
+		EventData:     string(associatedEventJSON),
+		Channel:       fileAssociatedEvent,
 	}
 
 	resp, err := client.CreateEvent(context.Background(), event)
@@ -187,6 +188,7 @@ func createFileCreatedEvent(createCmd *pb.AssociateFileCommand) error {
 
 func associateFileInQueryStore(cmd *pb.AssociateFileCommand) error {
 	conn, err := grpc.Dial(queryStoreURI, grpc.WithInsecure())
+	defer conn.Close()
 	if err != nil {
 		return errors.Wrap(err, "Unable to connect")
 	}
@@ -202,6 +204,7 @@ func associateFileInQueryStore(cmd *pb.AssociateFileCommand) error {
 
 func persistFileToQueryStore(cmd *pb.AssociateFileCommand) error {
 	conn, err := grpc.Dial(queryStoreURI, grpc.WithInsecure())
+	defer conn.Close()
 	if err != nil {
 		return errors.Wrap(err, "Unable to connect")
 	}
