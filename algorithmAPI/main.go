@@ -49,6 +49,14 @@ func createAlgorithm(w http.ResponseWriter, r *http.Request) {
 		http.Error(w, "Invalid Algorithm", 500)
 		return
 	}
+	if algo.Name == "" {
+		http.Error(w, "Invalid Algorithm. Provide name", 500)
+		return
+	}
+	if algo.Version == "" {
+		http.Error(w, "Invalid Algorithm. Provide version", 500)
+		return
+	}
 
 	cmdID, _ := uuid.NewV4()
 	createCmd := pb.CreateAlgorithmCommand{
