@@ -70,7 +70,7 @@ func main() {
 		)
 		wg.Done()
 	}()
-
+	wg.Add(1)
 	go func() {
 		sc.Subscribe(fileAssociateChannel, func(msg *stan.Msg) {
 			msg.Ack()
@@ -82,11 +82,14 @@ func main() {
 				return
 			}
 
+			if err = associateFileInQueryStore(&associationCmd); err != nil {
+				log.Println("failed to persist to query store", err)
+			}
 			if err = persistFileToQueryStore(&associationCmd); err != nil {
 				log.Println("failed to persist to query store", err)
 			}
 			if err := createFileCreatedEvent(&associationCmd); err != nil {
-				log.Println("failed to create algorithm created event", err)
+				log.Println("failed to create file associated event", err)
 			}
 		}, stan.DurableName(durableID),
 			stan.MaxInflight(25),
@@ -108,10 +111,8 @@ func createAlgorithmCreatedEvent(createCmd *pb.CreateAlgorithmCommand) error {
 	defer conn.Close()
 	client := pb.NewEventStoreClient(conn)
 
-	eventID, _ := uuid.NewV4()
 	createdEvent := pb.AlgorithmCreatedEvent{
-		Algorithm: createCmd.Algorithm,
-		Id:        eventID.String(),
+		AlgorithhmID: createCmd.Algorithm.Id,
 	}
 	log.Println("Creating created event", addedEvent)
 	createdEventJSON, _ := json.Marshal(createdEvent)
@@ -158,13 +159,12 @@ func createFileCreatedEvent(createCmd *pb.AssociateFileCommand) error {
 	defer conn.Close()
 	client := pb.NewEventStoreClient(conn)
 
-	eventID, _ := uuid.NewV4()
-	createdEvent := pb.AlgorithmCreatedEvent{
-		Algorithm: createCmd.Algorithm,
-		Id:        eventID.String(),
+	associatedEvent := pb.FileAssociatedWithAlgorithmEvent{
+		AlgorithmID: createCmd.Algorithm.Id,
+		FileID:      createCmd.AlgorithmFile.Id,
 	}
-	log.Println("Creating created event", addedEvent)
-	createdEventJSON, _ := json.Marshal(createdEvent)
+	log.Println("Creating created event", associatedEvent)
+	createdEventJSON, _ := json.Marshal(associatedEvent)
 	eid, _ := uuid.NewV4()
 	event := &pb.Event{
 		EventId:       eid.String(),
@@ -183,6 +183,21 @@ func createFileCreatedEvent(createCmd *pb.AssociateFileCommand) error {
 	} else {
 		return errors.Wrap(err, "errors from RPC server")
 	}
+}
+
+func associateFileInQueryStore(cmd *pb.AssociateFileCommand) error {
+	conn, err := grpc.Dial(queryStoreURI, grpc.WithInsecure())
+	if err != nil {
+		return errors.Wrap(err, "Unable to connect")
+	}
+
+	queryStoreClient := pb.NewAlgorithmQueryStoreClient(conn)
+	created, err := queryStoreClient.CreateFile(context.Background(), cmd.AlgorithmFile)
+	if err != nil {
+		return err
+	}
+	log.Println("persisted to query store: " + created.Id)
+	return nil
 }
 
 func persistFileToQueryStore(cmd *pb.AssociateFileCommand) error {

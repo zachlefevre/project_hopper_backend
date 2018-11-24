@@ -33,18 +33,25 @@ message Algorithm{
     repeated string datasetIDs = 6;
 }
 
+message MultipleAlgorithms{
+    repeated Algorithm algorithms = 1;
+}
+
 message AlgorithmFile{
     string content = 1;
     string name = 2;
     string filetype = 3;
     string id = 4;
 }
+
 service AlgorithmQueryStore{
     rpc GetAlgorithm(Algorithm) returns (Algorithm) {}
     rpc GetAlgorithms(Algorithm) returns (MultipleAlgorithms) {}
     rpc CreateAlgorithm(Algorithm) returns (Algorithm){}
     rpc AssociateFile(AlgorithmAndFile) returns (Algorithm) {}
+    rpc CreateFile(AlgorithmFile) returns (AlgorithmFile) {}
 }
+
 message AlgorithmAndFile{
     AlgorithmFile file = 1;
     Algorithm algorithm = 2;
@@ -52,9 +59,10 @@ message AlgorithmAndFile{
 
 //Events
 message AlgorithmCreatedEvent{
-    Algorithm algorithm = 1;
-    string id = 2;
+    string algorithhmID = 1;
 }
-message MultipleAlgorithms{
-    repeated Algorithm algorithms = 1;
+
+message FileAssociatedWithAlgorithmEvent{
+    string algorithmID = 1;
+    string fileID = 2;   
 }
