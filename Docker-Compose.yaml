@@ -9,7 +9,7 @@ services:
       context: algorithmAPI
     image: frlnbrg/project_hopper_algorithm_api
     ports:
-      - "3000:3000"
+      - "80:80"
     restart: always
     
   algorithm-aggregate:
