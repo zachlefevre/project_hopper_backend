@@ -129,7 +129,6 @@ func getAlgorithmRPC(query *pb.GetAlgorithmQuery) (*pb.Algorithm, error) {
 }
 
 func addFile(w http.ResponseWriter, r *http.Request) {
-	w.Header().Set("Content-Type", "application/json")
 	algoName := r.URL.Query().Get("algorithm")
 	version := r.URL.Query().Get("version")
 	if algoName == "" {
@@ -146,7 +145,13 @@ func addFile(w http.ResponseWriter, r *http.Request) {
 	}
 	defer file.Close()
 
-	fmt.Fprintf(w, "%v", handler.Header)
+	fileContent := make([]byte, 100)
+	_, err = file.Read(fileContent)
+	if err != nil {
+		log.Print(err)
+		http.Error(w, "Failed to read file", 500)
+		return
+	}
 
 	queryID, _ := uuid.NewV4()
 	getQuery := pb.GetAlgorithmQuery{
@@ -163,13 +168,7 @@ func addFile(w http.ResponseWriter, r *http.Request) {
 		http.Error(w, "Failed to get algorithm", 500)
 		return
 	}
-	var fileContent []byte
-	_, err = file.Read(fileContent)
-	if err != nil {
-		log.Print(err)
-		http.Error(w, "Failed to read file", 500)
-		return
-	}
+
 	algoFile := pb.AlgorithmFile{
 		Content:  string(fileContent),
 		Name:     handler.Header.Get("filename"),
