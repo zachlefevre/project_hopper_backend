@@ -43,6 +43,11 @@ service AlgorithmQueryStore{
     rpc GetAlgorithm(Algorithm) returns (Algorithm) {}
     rpc GetAlgorithms(Algorithm) returns (MultipleAlgorithms) {}
     rpc CreateAlgorithm(Algorithm) returns (Algorithm){}
+    rpc AssociateFile(AlgorithmAndFile) returns (Algorithm) {}
+}
+message AlgorithmAndFile{
+    AlgorithmFile file = 1;
+    Algorithm algorithm = 2;
 }
 
 //Events

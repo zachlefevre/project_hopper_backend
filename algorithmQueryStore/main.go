@@ -71,6 +71,27 @@ func (s store) CreateAlgorithm(ctx context.Context, algo *pb.Algorithm) (*pb.Alg
 
 	return algo, nil
 }
+func (s store) AssociateFile(ctx context.Context, pair *pb.AlgorithmAndFile) (*pb.Algorithm, error) {
+	log.Print("query store: association requested")
+
+	db, err := sql.Open("postgres", connectionstring)
+	defer db.Close()
+	if err != nil {
+		log.Fatal("error connecting to the database: ", err)
+	}
+
+	sql := `UPDATE algorithm.algos SET fileIDs = array_append(fileIDs,` + pair.File.Id + `)
+	WHERE algorithm.algos.id = ` + pair.Algorithm.Id
+	log.Println("executing: ", sql)
+
+	if resp, err := db.Exec(sql); err != nil {
+		log.Fatal("Failed to add file ID to algorithm", err)
+	} else {
+		log.Println("Failed to add file ID to algorithm", resp)
+	}
+
+	return pair.Algorithm, nil
+}
 
 func main() {
 	initDB()
