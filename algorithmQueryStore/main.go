@@ -93,7 +93,7 @@ func (s store) AssociateFile(ctx context.Context, pair *pb.AlgorithmAndFile) (*p
 	return pair.Algorithm, nil
 }
 func (s store) CreateFile(ctx context.Context, file *pb.AlgorithmFile) (*pb.AlgorithmFile, error) {
-	log.Print("query store: create algorithmFile request", file)
+	log.Print("query store: create algorithmFile request ", file)
 
 	db, err := sql.Open("postgres", connectionstring)
 	defer db.Close()
@@ -106,11 +106,11 @@ func (s store) CreateFile(ctx context.Context, file *pb.AlgorithmFile) (*pb.Algo
 		file.Content,
 		file.Name,
 		file.Filetype)
+	log.Println("filestring: ", fileString)
 	sql := "INSERT INTO algorithm.files VALUES (" + fileString + ")"
 	log.Println("executing: ", sql)
 
-	if resp, err := db.Exec(
-		sql); err != nil {
+	if resp, err := db.Exec(sql); err != nil {
 		log.Fatal("Failed to persist algo to db", err)
 	} else {
 		log.Println("Persisted algorithm to db: ", resp)

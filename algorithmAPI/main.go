@@ -1,6 +1,7 @@
 package main
 
 import (
+	"bytes"
 	"fmt"
 	"strings"
 
@@ -153,12 +154,14 @@ func addFile(w http.ResponseWriter, r *http.Request) {
 		http.Error(w, "Failed to read file", 500)
 		return
 	}
-	log.Println(handler.Header)
-	log.Println(handler.Header.Get("Content-Disposition"))
+	fileContent = bytes.Trim(fileContent, "\x00")
+	fileStr := string(fileContent)
+
 	cd := strings.Split(handler.Header.Get("Content-Disposition"), "; ")
 	nameSection := cd[2]
 	log.Println(cd, nameSection)
 	name := strings.Split(nameSection, "=")[1]
+	name = name[1 : len(name)-1]
 	log.Println(name)
 	queryID, _ := uuid.NewV4()
 	getQuery := pb.GetAlgorithmQuery{
@@ -177,7 +180,7 @@ func addFile(w http.ResponseWriter, r *http.Request) {
 	}
 	log.Println(handler.Header)
 	algoFile := pb.AlgorithmFile{
-		Content:  string(fileContent),
+		Content:  fileStr,
 		Name:     name,
 		Filetype: handler.Header.Get("Content-Type"),
 	}
