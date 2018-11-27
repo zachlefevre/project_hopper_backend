@@ -15,7 +15,7 @@ import (
 
 	"github.com/gofrs/uuid"
 	"github.com/gorilla/mux"
-	"github.com/zachlefevre/project_hopper_backend/com"
+	pb "github.com/zachlefevre/project_hopper_backend/com_ds"
 )
 
 const (

@@ -1,5 +1,5 @@
 syntax = 'proto3';
-package pb;
+package dspb;
 
 service DatasetAggregate{
     rpc CreateDataset(CreateDatasetCommand) returns (Dataset){}
