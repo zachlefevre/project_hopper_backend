@@ -1,0 +1,8 @@
+sudo: required
+services:
+  - docker
+before_install:
+  - docker build -t frlnbrg/dataset-api -f Dockerfile.test .
+
+scripts:
+  - docker run frlnbrg/dataset-api go test

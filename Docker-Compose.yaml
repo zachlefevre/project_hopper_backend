@@ -4,18 +4,33 @@ services:
     image: nats-streaming
     restart: always
     
-  api:
+  algorithm-api:
     build:
       context: algorithmAPI
     image: frlnbrg/project_hopper_algorithm_api
     ports:
-      - "80:80"
+    - "80:80"
     restart: always
-    
+
+  dataset-api:
+    build:
+      context: datasetAPI
+    image: frlnbrg/project_hopper_dataset_api
+    ports:
+    - "80:80"
+    restart: always
+
+
   algorithm-aggregate:
     build:
       context: algorithm
     image: frlnbrg/project_hopper_algorithm_aggregate    
+    restart: always
+
+  dataset-aggregate:
+    build:
+      context: dataset
+    image: frlnbrg/project_hopper_dataset_aggregate
     restart: always
 
   eventstore:
@@ -24,14 +39,26 @@ services:
     image: frlnbrg/project_hopper_event_store    
     restart: always
 
-  querystore:
+  algorithm-querystore:
     build:
       context: algorithmQueryStore
     image: frlnbrg/algorithm_query_store
+    restart: always
+
+  dataset-querystore:
+    build:
+      context: datasetQueryStore
+    image: frlnbrg/dataset_query_store
     restart: always
 
   algorithm-sync-worker:
     build:
       context: algorithmSync
     image: frlnbrg/algorithm_sync_worker
+    restart: always
+
+  dataset-sync-worker:
+    build:
+      context: datasetSync
+    image: frlnbrg/dataset_sync_worker
     restart: always
