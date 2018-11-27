@@ -54,7 +54,7 @@ service DatasetQueryStore{
 
 message DatasetAndFile{
     DatasetFile file = 1;
-    Dataset algorithm = 2;
+    Dataset dataset = 2;
 }
 
 //Events

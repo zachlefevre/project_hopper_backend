@@ -14,6 +14,7 @@ import (
 	"google.golang.org/grpc"
 
 	"github.com/zachlefevre/project_hopper_backend/com"
+	dspb "github.com/zachlefevre/project_hopper_backend/com_ds"
 )
 
 const (
@@ -29,7 +30,7 @@ const (
 type DataServer struct {
 }
 
-func (a *DataServer) CreateDataset(ctx context.Context, cmd *pb.CreateDatasetCommand) (*pb.Dataset, error) {
+func (a *DataServer) CreateDataset(ctx context.Context, cmd *dspb.CreateDatasetCommand) (*dspb.Dataset, error) {
 	log.Printf("Dataset Aggregate Received: ", cmd)
 	var conn *grpc.ClientConn
 	var err error
@@ -61,7 +62,7 @@ func (a *DataServer) CreateDataset(ctx context.Context, cmd *pb.CreateDatasetCom
 	}
 	return cmd.Dataset, nil
 }
-func (a *DataServer) GetDataset(ctx context.Context, qry *pb.GetDatasetQuery) (*pb.Dataset, error) {
+func (a *DataServer) GetDataset(ctx context.Context, qry *dspb.GetDatasetQuery) (*dspb.Dataset, error) {
 	log.Printf("Dataset Query Received: ", qry)
 	var conn *grpc.ClientConn
 	var err error
@@ -69,7 +70,7 @@ func (a *DataServer) GetDataset(ctx context.Context, qry *pb.GetDatasetQuery) (*
 		log.Printf(queryStoreURI + " is not available. Trying again")
 		conn, err = grpc.Dial(queryStoreURI, grpc.WithInsecure())
 	}
-	queryStore := pb.NewDatasetQueryStoreClient(conn)
+	queryStore := dspb.NewDatasetQueryStoreClient(conn)
 	response, err := queryStore.GetDataset(ctx, qry.Dataset)
 	log.Print("received dataset: ", response)
 	if err != nil {
@@ -77,7 +78,7 @@ func (a *DataServer) GetDataset(ctx context.Context, qry *pb.GetDatasetQuery) (*
 	}
 	return response, nil
 }
-func (a *DataServer) AssociateFile(ctx context.Context, cmd *pb.AssociateFileCommand) (*pb.Dataset, error) {
+func (a *DataServer) AssociateFile(ctx context.Context, cmd *dspb.AssociateFileCommand) (*dspb.Dataset, error) {
 	log.Printf("Dataset File Association Request Recieved: ", cmd)
 	var conn *grpc.ClientConn
 	var err error
@@ -118,6 +119,6 @@ func main() {
 
 	s := grpc.NewServer()
 	log.Println("Dataset aggregate is running on:", port)
-	pb.RegisterDatasetAggregateServer(s, &DataServer{})
+	dspb.RegisterDatasetAggregateServer(s, &DataServer{})
 	s.Serve(lis)
 }

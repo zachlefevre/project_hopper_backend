@@ -11,6 +11,7 @@ import (
 	"github.com/gofrs/uuid"
 	"github.com/pkg/errors"
 	"github.com/zachlefevre/project_hopper_backend/com"
+	dspb "github.com/zachlefevre/project_hopper_backend/com_ds"
 
 	"github.com/nats-io/go-nats-streaming"
 	"github.com/zachlefevre/project_hopper_backend/natsutil"
@@ -51,7 +52,7 @@ func main() {
 		sc.Subscribe(createChannel, func(msg *stan.Msg) {
 			msg.Ack()
 			log.Println("dataset sync heard ", msg.Data)
-			createCmd := pb.CreatedatasetCommand{}
+			createCmd := dspb.CreateDatasetCommand{}
 			err := json.Unmarshal(msg.Data, &createCmd)
 			if err != nil {
 				log.Print(err)
@@ -76,7 +77,7 @@ func main() {
 		sc.Subscribe(fileAssociateChannel, func(msg *stan.Msg) {
 			msg.Ack()
 			log.Println("file association sync heard ", msg.Data)
-			associationCmd := pb.AssociateFileCommand{}
+			associationCmd := dspb.AssociateFileCommand{}
 			err := json.Unmarshal(msg.Data, &associationCmd)
 			if err != nil {
 				log.Print(err)
@@ -104,7 +105,7 @@ func main() {
 	runtime.Goexit()
 }
 
-func createDatasetCreatedEvent(createCmd *pb.CreateDatasetCommand) error {
+func createDatasetCreatedEvent(createCmd *dspb.CreateDatasetCommand) error {
 	conn, err := grpc.Dial(eventstoreURI, grpc.WithInsecure())
 	if err != nil {
 		log.Fatalf("Unable to connect: %v", err)
@@ -112,7 +113,7 @@ func createDatasetCreatedEvent(createCmd *pb.CreateDatasetCommand) error {
 	defer conn.Close()
 	client := pb.NewEventStoreClient(conn)
 
-	createdEvent := pb.DatasetCreatedEvent{
+	createdEvent := dspb.DatasetCreatedEvent{
 		DatasetID: createCmd.Dataset.Id,
 	}
 	log.Println("Creating created event", addedEvent)
@@ -137,12 +138,12 @@ func createDatasetCreatedEvent(createCmd *pb.CreateDatasetCommand) error {
 	}
 }
 
-func persistDatasetToQueryStore(cmd *pb.CreateDatasetCommand) error {
+func persistDatasetToQueryStore(cmd *dspb.CreateDatasetCommand) error {
 	conn, err := grpc.Dial(queryStoreURI, grpc.WithInsecure())
 	if err != nil {
 		return errors.Wrap(err, "Unable to connect")
 	}
-	queryStoreClient := pb.NewDatasetQueryStoreClient(conn)
+	queryStoreClient := dspb.NewDatasetQueryStoreClient(conn)
 	added, err := queryStoreClient.CreateDataset(context.Background(), cmd.Dataset)
 	if err != nil {
 		return err
@@ -152,7 +153,7 @@ func persistDatasetToQueryStore(cmd *pb.CreateDatasetCommand) error {
 }
 
 //TODO
-func createFileCreatedEvent(createCmd *pb.AssociateFileCommand) error {
+func createFileCreatedEvent(createCmd *dspb.AssociateFileCommand) error {
 	conn, err := grpc.Dial(eventstoreURI, grpc.WithInsecure())
 	if err != nil {
 		log.Fatalf("Unable to connect: %v", err)
@@ -160,7 +161,7 @@ func createFileCreatedEvent(createCmd *pb.AssociateFileCommand) error {
 	defer conn.Close()
 	client := pb.NewEventStoreClient(conn)
 
-	associatedEvent := pb.FileAssociatedWithDatasetEvent{
+	associatedEvent := dspb.FileAssociatedWithDatasetEvent{
 		DatasetID: createCmd.Dataset.Id,
 		FileID:    createCmd.DatasetFile.Id,
 	}
@@ -186,14 +187,14 @@ func createFileCreatedEvent(createCmd *pb.AssociateFileCommand) error {
 	}
 }
 
-func associateFileInQueryStore(cmd *pb.AssociateFileCommand) error {
+func associateFileInQueryStore(cmd *dspb.AssociateFileCommand) error {
 	conn, err := grpc.Dial(queryStoreURI, grpc.WithInsecure())
 	defer conn.Close()
 	if err != nil {
 		return errors.Wrap(err, "Unable to connect")
 	}
 
-	queryStoreClient := pb.NewDatasetQueryStoreClient(conn)
+	queryStoreClient := dspb.NewDatasetQueryStoreClient(conn)
 	created, err := queryStoreClient.CreateFile(context.Background(), cmd.DatasetFile)
 	if err != nil {
 		return err
@@ -202,17 +203,17 @@ func associateFileInQueryStore(cmd *pb.AssociateFileCommand) error {
 	return nil
 }
 
-func persistFileToQueryStore(cmd *pb.AssociateFileCommand) error {
+func persistFileToQueryStore(cmd *dspb.AssociateFileCommand) error {
 	conn, err := grpc.Dial(queryStoreURI, grpc.WithInsecure())
 	defer conn.Close()
 	if err != nil {
 		return errors.Wrap(err, "Unable to connect")
 	}
-	fileAndDataset := &pb.DatasetAndFile{
+	fileAndDataset := &dspb.DatasetAndFile{
 		File:    cmd.DatasetFile,
 		Dataset: cmd.Dataset,
 	}
-	queryStoreClient := pb.NewDatasetQueryStoreClient(conn)
+	queryStoreClient := dspb.NewDatasetQueryStoreClient(conn)
 	updated, err := queryStoreClient.AssociateFile(context.Background(), fileAndDataset)
 	if err != nil {
 		return err
