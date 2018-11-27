@@ -12,10 +12,32 @@ spec:
 kind: Service
 apiVersion: v1
 metadata:
+  name: dataset-api
+spec:
+  selector:
+    app: dataset-api
+  ports:
+  - port: 80
+  type: LoadBalancer
+---
+kind: Service
+apiVersion: v1
+metadata:
   name: algorithm-aggregate
 spec:
   selector:
     app: algorithm-aggregate
+  ports:
+  - port: 50051
+    targetPort: 50051
+---
+kind: Service
+apiVersion: v1
+metadata:
+  name: dataset-aggregate
+spec:
+  selector:
+    app: dataset-aggregate
   ports:
   - port: 50051
     targetPort: 50051
@@ -45,10 +67,21 @@ spec:
 kind: Service
 apiVersion: v1
 metadata:
-  name: querystore
+  name: algorithm-querystore
 spec:
   selector:
-    app: querystore
+    app: algorithm-querystore
+  ports:
+  - port: 50051
+    targetPort: 50051
+---
+kind: Service
+apiVersion: v1
+metadata:
+  name: dataset-querystore
+spec:
+  selector:
+    app: dataset-querystore
   ports:
   - port: 50051
     targetPort: 50051

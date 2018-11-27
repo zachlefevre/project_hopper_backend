@@ -18,16 +18,16 @@ import (
 )
 
 const (
-	baseClientID         = "algorithm-repository"
+	baseClientID         = "dataset-repository"
 	clusterID            = "test-cluster"
-	aggregate            = "Alorithm"
+	aggregate            = "Dataset"
 	natsURL              = "nats:4222"
 	eventstoreURI        = "eventstore:50051"
-	durableID            = "algorithm-repository-durable"
-	queryStoreURI        = "algorithm-querystore:50051"
-	addedEvent           = "algorithm-added-to-query-store"
-	fileAssociatedEvent  = "algorithm-associated-with-file"
-	createChannel        = "create-algorithm"
+	durableID            = "dataset-repository-durable"
+	queryStoreURI        = "dataset-querystore:50051"
+	addedEvent           = "dataset-added-to-query-store"
+	fileAssociatedEvent  = "dataset-associated-with-file"
+	createChannel        = "create-dataset"
 	fileAssociateChannel = "associate-file"
 )
 
@@ -50,19 +50,19 @@ func main() {
 	go func() {
 		sc.Subscribe(createChannel, func(msg *stan.Msg) {
 			msg.Ack()
-			log.Println("algorithm sync heard ", msg.Data)
-			createCmd := pb.CreateAlgorithmCommand{}
+			log.Println("dataset sync heard ", msg.Data)
+			createCmd := pb.CreatedatasetCommand{}
 			err := json.Unmarshal(msg.Data, &createCmd)
 			if err != nil {
 				log.Print(err)
 				return
 			}
 
-			if err = persistAlgorithmToQueryStore(&createCmd); err != nil {
-				log.Println("failed to persist algorithm to query store", err)
+			if err = persistDatasetToQueryStore(&createCmd); err != nil {
+				log.Println("failed to persist dataset to query store", err)
 			}
-			if err := createAlgorithmCreatedEvent(&createCmd); err != nil {
-				log.Println("failed to create algorithm created event", err)
+			if err := createDatasetCreatedEvent(&createCmd); err != nil {
+				log.Println("failed to create dataset created event", err)
 			}
 		}, stan.DurableName(durableID),
 			stan.MaxInflight(25),
@@ -104,7 +104,7 @@ func main() {
 	runtime.Goexit()
 }
 
-func createAlgorithmCreatedEvent(createCmd *pb.CreateAlgorithmCommand) error {
+func createDatasetCreatedEvent(createCmd *pb.CreateDatasetCommand) error {
 	conn, err := grpc.Dial(eventstoreURI, grpc.WithInsecure())
 	if err != nil {
 		log.Fatalf("Unable to connect: %v", err)
@@ -112,8 +112,8 @@ func createAlgorithmCreatedEvent(createCmd *pb.CreateAlgorithmCommand) error {
 	defer conn.Close()
 	client := pb.NewEventStoreClient(conn)
 
-	createdEvent := pb.AlgorithmCreatedEvent{
-		AlgorithhmID: createCmd.Algorithm.Id,
+	createdEvent := pb.DatasetCreatedEvent{
+		DatasetID: createCmd.Dataset.Id,
 	}
 	log.Println("Creating created event", addedEvent)
 	createdEventJSON, _ := json.Marshal(createdEvent)
@@ -137,13 +137,13 @@ func createAlgorithmCreatedEvent(createCmd *pb.CreateAlgorithmCommand) error {
 	}
 }
 
-func persistAlgorithmToQueryStore(cmd *pb.CreateAlgorithmCommand) error {
+func persistDatasetToQueryStore(cmd *pb.CreateDatasetCommand) error {
 	conn, err := grpc.Dial(queryStoreURI, grpc.WithInsecure())
 	if err != nil {
 		return errors.Wrap(err, "Unable to connect")
 	}
-	queryStoreClient := pb.NewAlgorithmQueryStoreClient(conn)
-	added, err := queryStoreClient.CreateAlgorithm(context.Background(), cmd.Algorithm)
+	queryStoreClient := pb.NewDatasetQueryStoreClient(conn)
+	added, err := queryStoreClient.CreateDataset(context.Background(), cmd.Dataset)
 	if err != nil {
 		return err
 	}
@@ -160,9 +160,9 @@ func createFileCreatedEvent(createCmd *pb.AssociateFileCommand) error {
 	defer conn.Close()
 	client := pb.NewEventStoreClient(conn)
 
-	associatedEvent := pb.FileAssociatedWithAlgorithmEvent{
-		AlgorithmID: createCmd.Algorithm.Id,
-		FileID:      createCmd.AlgorithmFile.Id,
+	associatedEvent := pb.FileAssociatedWithDatasetEvent{
+		DatasetID: createCmd.Dataset.Id,
+		FileID:    createCmd.DatasetFile.Id,
 	}
 	log.Println("Creating created event", associatedEvent)
 	associatedEventJSON, _ := json.Marshal(associatedEvent)
@@ -193,8 +193,8 @@ func associateFileInQueryStore(cmd *pb.AssociateFileCommand) error {
 		return errors.Wrap(err, "Unable to connect")
 	}
 
-	queryStoreClient := pb.NewAlgorithmQueryStoreClient(conn)
-	created, err := queryStoreClient.CreateFile(context.Background(), cmd.AlgorithmFile)
+	queryStoreClient := pb.NewDatasetQueryStoreClient(conn)
+	created, err := queryStoreClient.CreateFile(context.Background(), cmd.DatasetFile)
 	if err != nil {
 		return err
 	}
@@ -208,12 +208,12 @@ func persistFileToQueryStore(cmd *pb.AssociateFileCommand) error {
 	if err != nil {
 		return errors.Wrap(err, "Unable to connect")
 	}
-	fileAndAlgorithm := &pb.AlgorithmAndFile{
-		File:      cmd.AlgorithmFile,
-		Algorithm: cmd.Algorithm,
+	fileAndDataset := &pb.DatasetAndFile{
+		File:    cmd.DatasetFile,
+		Dataset: cmd.Dataset,
 	}
-	queryStoreClient := pb.NewAlgorithmQueryStoreClient(conn)
-	updated, err := queryStoreClient.AssociateFile(context.Background(), fileAndAlgorithm)
+	queryStoreClient := pb.NewDatasetQueryStoreClient(conn)
+	updated, err := queryStoreClient.AssociateFile(context.Background(), fileAndDataset)
 	if err != nil {
 		return err
 	}

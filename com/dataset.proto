@@ -1,9 +1,68 @@
 syntax = 'proto3';
 package pb;
 
+service DatasetAggregate{
+    rpc CreateDataset(CreateDatasetCommand) returns (Dataset){}
+    rpc GetDataset(GetDatasetQuery) returns (Dataset) {}
+    rpc AssociateFile(AssociateFileCommand) returns (Dataset) {}
+}
+
+message CreateDatasetCommand{
+    Dataset dataset = 1;
+    int64 createdOn = 2;
+    string id = 3;
+}
+
+message AssociateFileCommand{
+    Dataset dataset = 1;
+    DatasetFile datasetFile = 2;
+}
+
+message GetDatasetQuery{
+    Dataset dataset = 1;
+    int64 createdOn = 2;
+    string id = 3;
+}
 
 message Dataset{
     string name = 1;
     string version = 2;
     string id = 3;
+    string status = 4;
+    repeated string fileIDs = 5;
+    repeated string datasetIDs = 6;
+}
+
+message MultipleDatasets{
+    repeated Dataset datasets = 1;
+}
+
+message DatasetFile{
+    string content = 1;
+    string name = 2;
+    string filetype = 3;
+    string id = 4;
+}
+
+service DatasetQueryStore{
+    rpc GetDataset(Dataset) returns (Dataset) {}
+    rpc GetDatasets(Dataset) returns (MultipleDatasets) {}
+    rpc CreateDataset(Dataset) returns (Dataset){}
+    rpc AssociateFile(DatasetAndFile) returns (Dataset) {}
+    rpc CreateFile(DatasetFile) returns (DatasetFile) {}
+}
+
+message DatasetAndFile{
+    DatasetFile file = 1;
+    Dataset algorithm = 2;
+}
+
+//Events
+message DatasetCreatedEvent{
+    string DatasetID = 1;
+}
+
+message FileAssociatedWithDatasetEvent{
+    string datasetID = 1;
+    string fileID = 2;
 }
