@@ -202,6 +202,22 @@ spec:
       - name: dataset-sync-worker
         image: frlnbrg/dataset_sync_worker
         imagePullPolicy: Always
-
-
-  
+---
+apiVersion: apps/v1
+kind: Deployment
+metadata:
+  name: webapp
+spec:
+  selector:
+    matchLabels:
+      app: webapp
+  template:
+    metadata:
+      labels:
+        app: webapp
+    spec:
+      containers:
+      - name: webapp
+        image: frlnbrg/project_hopper_frontend
+        ports:
+        - containerPort: 80
