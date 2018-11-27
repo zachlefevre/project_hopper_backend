@@ -149,7 +149,7 @@ func initDB() {
 			name STRING,
 			version STRING,
 			status STRING,
-			fileIDs STRING[]`); err != nil {
+			fileIDs STRING[])`); err != nil {
 		log.Fatal(err)
 	} else {
 		log.Println("Created dataset table: ", resp)
