@@ -11,4 +11,4 @@ RUN apk --no-cache add ca-certificates
 RUN mkdir /app
 WORKDIR /app
 COPY --from=builder /go/src/github.com/zachlefevre/project_hopper_backend/dataset .
-CMD [ "./datset" ]
+CMD [ "./dataset" ]
