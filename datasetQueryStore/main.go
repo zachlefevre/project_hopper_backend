@@ -33,8 +33,21 @@ func (s store) GetDataset(ctx context.Context, data *pb.Dataset) (*pb.Dataset, e
 		DatasetIDs: nil,
 	}, nil
 }
-func (s store) GetDatasets(ctx context.Context, data *pb.Dataset) (*pb.MultipleDatasets, error) {
-	return nil, nil
+func (s store) GetDatasets(ctx context.Context, data *pb.MultipleDatasets) (*pb.MultipleDatasets, error) {
+	log.Print("query store: query algorithm request")
+
+	for i, element := range data.Datasets {
+		&pb.MultipleDatasets[i] {
+			Name:       element.Name + " but better",
+			Version:    element.Version,
+			Id:         element.Id,
+			Status:     "created",
+			FileIDs:    nil,
+			DatasetIDs: nil,
+		}
+	}
+
+	return &pb.MultipleDatasets, nil
 }
 func (s store) CreateDataset(ctx context.Context, data *pb.Dataset) (*pb.Dataset, error) {
 	log.Print("query store: create Dataset request")
