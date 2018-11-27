@@ -33,8 +33,21 @@ func (s store) GetAlgorithm(ctx context.Context, algo *pb.Algorithm) (*pb.Algori
 		DatasetIDs: nil,
 	}, nil
 }
-func (s store) GetAlgorithms(ctx context.Context, algo *pb.Algorithm) (*pb.MultipleAlgorithms, error) {
-	return nil, nil
+func (s store) GetAlgorithms(ctx context.Context, algos *pb.MultipleAlgorithms) (*pb.MultipleAlgorithms, error) {
+	log.Print("query store: query algorithm request")
+
+	for i, element := range algos.Algorithms {
+		&pb.MultipleAlgorithms[i] {
+			Name:       element.Name + " but better",
+			Version:    element.Version,
+			Id:         element.Id,
+			Status:     "created",
+			FileIDs:    nil,
+			DatasetIDs: nil,
+		}
+	}
+
+	return &pb.MultipleAlgorithms, nil
 }
 func (s store) CreateAlgorithm(ctx context.Context, algo *pb.Algorithm) (*pb.Algorithm, error) {
 	log.Print("query store: create algorithm request")
