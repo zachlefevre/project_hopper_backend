@@ -23,6 +23,28 @@ spec:
 apiVersion: apps/v1
 kind: Deployment
 metadata:
+  name: dataset-api
+spec:
+  replicas: 3
+  selector:
+    matchLabels:
+      app: dataset-api
+  template:
+    metadata:
+      labels:
+        app: dataset-api
+    spec:
+      containers:
+      - name: dataset-api
+        image: frlnbrg/project_hopper_dataset_api
+        ports:
+        - containerPort: 3000
+        imagePullPolicy: Always
+
+---
+apiVersion: apps/v1
+kind: Deployment
+metadata:
   name: algorithm-aggregate
 spec:
   replicas: 3
@@ -37,6 +59,27 @@ spec:
       containers:
       - name: algorithm-aggregate
         image: frlnbrg/project_hopper_algorithm_aggregate
+        ports:
+        - containerPort: 50051
+        imagePullPolicy: Always
+---
+apiVersion: apps/v1
+kind: Deployment
+metadata:
+  name: dataset-aggregate
+spec:
+  replicas: 3
+  selector:
+    matchLabels:
+      app: dataset-aggregate
+  template:
+    metadata:
+      labels:
+        app: dataset-aggregate
+    spec:
+      containers:
+      - name: dataset-aggregate
+        image: frlnbrg/project_hopper_dataset_aggregate
         ports:
         - containerPort: 50051
         imagePullPolicy: Always
@@ -86,22 +129,42 @@ spec:
   apiVersion: apps/v1
   kind: Deployment
   metadata:
-    name: querystore
+    name: algorithm-querystore
   spec:
     selector:
       matchLabels:
-        app: querystore
+        app: algorithm-querystore
     template:
       metadata:
         labels:
-          app: querystore
+          app: algorithm-querystore
       spec:
         containers:
-        - name: querystore
+        - name: algorithm-querystore
           image: frlnbrg/algorithm_query_store
           ports:
           - containerPort: 50051
           imagePullPolicy: Always
+---
+apiVersion: apps/v1
+kind: Deployment
+metadata:
+  name: dataset-querystore
+spec:
+  selector:
+    matchLabels:
+      app: dataset-querystore
+  template:
+    metadata:
+      labels:
+        app: dataset-querystore
+    spec:
+      containers:
+      - name: dataset-querystore
+        image: frlnbrg/dataset_query_store
+        ports:
+        - containerPort: 50051
+        imagePullPolicy: Always
 ---
 apiVersion: apps/v1
 kind: Deployment
@@ -120,5 +183,25 @@ spec:
       - name: algorithm-sync-worker
         image: frlnbrg/algorithm_sync_worker
         imagePullPolicy: Always
+
+---
+apiVersion: apps/v1
+kind: Deployment
+metadata:
+  name: dataset-sync-worker
+spec:
+  selector:
+    matchLabels:
+      app: dataset-sync-worker
+  template:
+    metadata:
+      labels:
+        app: dataset-sync-worker
+    spec:
+      containers:
+      - name: dataset-sync-worker
+        image: frlnbrg/dataset_sync_worker
+        imagePullPolicy: Always
+
 
   
