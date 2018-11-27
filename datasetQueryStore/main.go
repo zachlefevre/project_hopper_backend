@@ -11,7 +11,7 @@ import (
 	"google.golang.org/grpc"
 
 	_ "github.com/lib/pq"
-	"github.com/zachlefevre/project_hopper_backend/com"
+	dspb "github.com/zachlefevre/project_hopper_backend/com_ds"
 )
 
 const (
@@ -22,9 +22,9 @@ const (
 type store struct {
 }
 
-func (s store) GetDataset(ctx context.Context, data *pb.Dataset) (*pb.Dataset, error) {
+func (s store) GetDataset(ctx context.Context, data *dspb.Dataset) (*dspb.Dataset, error) {
 	log.Print("query store: query dataset request")
-	return &pb.Dataset{
+	return &dspb.Dataset{
 		Name:       data.Name + " but better",
 		Version:    data.Version,
 		Id:         data.Id,
@@ -33,23 +33,12 @@ func (s store) GetDataset(ctx context.Context, data *pb.Dataset) (*pb.Dataset, e
 		DatasetIDs: nil,
 	}, nil
 }
-func (s store) GetDatasets(ctx context.Context, data *pb.MultipleDatasets) (*pb.MultipleDatasets, error) {
+func (s store) GetDatasets(ctx context.Context, data *dspb.Dataset) (*dspb.MultipleDatasets, error) {
 	log.Print("query store: query algorithm request")
 
-	for i, element := range data.Datasets {
-		&pb.MultipleDatasets[i] {
-			Name:       element.Name + " but better",
-			Version:    element.Version,
-			Id:         element.Id,
-			Status:     "created",
-			FileIDs:    nil,
-			DatasetIDs: nil,
-		}
-	}
-
-	return &pb.MultipleDatasets, nil
+	return nil, nil
 }
-func (s store) CreateDataset(ctx context.Context, data *pb.Dataset) (*pb.Dataset, error) {
+func (s store) CreateDataset(ctx context.Context, data *dspb.Dataset) (*dspb.Dataset, error) {
 	log.Print("query store: create Dataset request")
 
 	db, err := sql.Open("postgres", connectionstring)
@@ -59,19 +48,14 @@ func (s store) CreateDataset(ctx context.Context, data *pb.Dataset) (*pb.Dataset
 	}
 
 	var fileIDs []string
-	var datasetIDs []string
-	for _, id := range algo.FileIDs {
+	for _, id := range data.FileIDs {
 		fileIDs = append(fileIDs, `'`+id+`'`)
 	}
-	for _, id := range algo.DatasetIDs {
-		datasetIDs = append(datasetIDs, `'`+id+`'`)
-	}
-	dataString := fmt.Sprintf("'%v', '%v', '%v', 'Created', ARRAY[%v], ARRAY[%v]",
+	dataString := fmt.Sprintf("'%v', '%v', '%v', 'Created', ARRAY[%v]",
 		data.Id,
 		data.Name,
 		data.Version,
-		strings.Join(fileIDs, ","),
-		strings.Join(datasetIDs, ","))
+		strings.Join(fileIDs, ","))
 	sql := "INSERT INTO dataset.datas VALUES (" + dataString + ")"
 	log.Println("executing: ", sql)
 
@@ -84,7 +68,7 @@ func (s store) CreateDataset(ctx context.Context, data *pb.Dataset) (*pb.Dataset
 
 	return data, nil
 }
-func (s store) AssociateFile(ctx context.Context, pair *pb.DatasetAndFile) (*pb.Dataset, error) {
+func (s store) AssociateFile(ctx context.Context, pair *dspb.DatasetAndFile) (*dspb.Dataset, error) {
 	log.Print("query store: association requested")
 
 	db, err := sql.Open("postgres", connectionstring)
@@ -105,7 +89,7 @@ func (s store) AssociateFile(ctx context.Context, pair *pb.DatasetAndFile) (*pb.
 
 	return pair.Dataset, nil
 }
-func (s store) CreateFile(ctx context.Context, file *pb.DatasetFile) (*pb.DatasetFile, error) {
+func (s store) CreateFile(ctx context.Context, file *dspb.DatasetFile) (*dspb.DatasetFile, error) {
 	log.Print("query store: create datsetFile request ", file)
 
 	db, err := sql.Open("postgres", connectionstring)
@@ -141,7 +125,7 @@ func main() {
 
 	s := grpc.NewServer()
 	log.Println("Dataset query store is running on:", port)
-	pb.RegisterDatasetQueryStoreServer(s, &store{})
+	dspb.RegisterDatasetQueryStoreServer(s, &store{})
 	s.Serve(lis)
 }
 
@@ -165,8 +149,7 @@ func initDB() {
 			name STRING,
 			version STRING,
 			status STRING,
-			fileIDs STRING[],
-			datasetIDs STRING[])`); err != nil {
+			fileIDs STRING[]`); err != nil {
 		log.Fatal(err)
 	} else {
 		log.Println("Created dataset table: ", resp)
