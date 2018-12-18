@@ -23,15 +23,50 @@ type store struct {
 }
 
 func (s store) GetDataset(ctx context.Context, data *dspb.Dataset) (*dspb.Dataset, error) {
-	log.Print("query store: query dataset request")
-	return &dspb.Dataset{
-		Name:       data.Name + " but better",
-		Version:    data.Version,
-		Id:         data.Id,
-		Status:     "created",
-		FileIDs:    nil,
-		DatasetIDs: nil,
-	}, nil
+	log.Print("query store: query Dataset request")
+
+	db, err := sql.Open("postgres", connectionstring)
+	defer db.Close()
+	if err != nil {
+		log.Fatal("error connecting to the database: ", err)
+	}
+	var sqlString string
+	if data.Id != "" {
+		sqlString = "SELECT * FROM dataset.datas WHERE ID = " + "'" + data.Id + "'"
+	} else {
+		sqlString = "SELECT * FROM dataset.datas WHERE NAME = " + "'" + data.Name + "'" + "AND Version = " + "'" + data.Version + "'"
+	}
+
+	log.Println("executing: ", sqlString)
+
+	resp, err := db.Query(sqlString)
+	if err != nil {
+		log.Fatal("Failed to persist data to db", err)
+	} else {
+		log.Println("Queried dataset from db: ", resp)
+	}
+
+	defer resp.Close()
+	ds := dspb.Dataset{}
+	for resp.Next() {
+		fileIDsB := []uint8{}
+		err := resp.Scan(&ds.Id, &ds.Name, &ds.Version, &ds.Status, &fileIDsB)
+		for _, fid := range fileIDsB {
+			ds.FileIDs = append(ds.FileIDs, (string(fid)))
+		}
+
+		log.Println("fileIDs", ds.FileIDs)
+		if err != nil {
+			log.Fatal(err)
+		}
+		log.Println("returning " + ds.Name)
+		return &ds, nil
+	}
+	err = resp.Err()
+	if err != nil {
+		log.Fatal(err)
+	}
+	return &dspb.Dataset{}, nil
 }
 func (s store) GetDatasets(ctx context.Context, data *dspb.Dataset) (*dspb.MultipleDatasets, error) {
 	log.Print("query store: query algorithm request")
