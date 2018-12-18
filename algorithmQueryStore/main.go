@@ -24,14 +24,60 @@ type store struct {
 
 func (s store) GetAlgorithm(ctx context.Context, algo *pb.Algorithm) (*pb.Algorithm, error) {
 	log.Print("query store: query algorithm request")
-	return &pb.Algorithm{
-		Name:       algo.Name + " but better",
-		Version:    algo.Version,
-		Id:         algo.Id,
-		Status:     "created",
-		FileIDs:    nil,
-		DatasetIDs: nil,
-	}, nil
+
+	db, err := sql.Open("postgres", connectionstring)
+	defer db.Close()
+	if err != nil {
+		log.Fatal("error connecting to the database: ", err)
+	}
+	var sqlString string
+	if algo.Id != "" {
+		sqlString = "SELECT * FROM algorithm.algos WHERE ID = " + "'" + algo.Id + "'"
+	} else {
+		sqlString = "SELECT * FROM algorithm.algos WHERE NAME = " + "'" + algo.Name + "'" + "AND Version = " + "'" + algo.Version + "'"
+	}
+
+	log.Println("executing: ", sqlString)
+
+	resp, err := db.Query(sqlString)
+	if err != nil {
+		log.Fatal("Failed to get algorithm to db", err)
+	} else {
+		log.Println("Queried algorithm from db: ", resp)
+	}
+
+	defer resp.Close()
+	ds := pb.Algorithm{}
+	fileIDsB := []uint8{}
+	datasetIDsB := []uint8{}
+	for resp.Next() {
+		err := resp.Scan(&ds.Id, &ds.Name, &ds.Version, &ds.Status, &fileIDsB, &datasetIDsB)
+		for _, fid := range fileIDsB {
+			ds.FileIDs = append(ds.FileIDs, (string(fid)))
+		}
+
+		log.Println("fileIDs", ds.FileIDs)
+		if err != nil {
+			log.Fatal(err)
+		}
+
+		for _, dsid := range datasetIDsB {
+			ds.DatasetIDs = append(ds.DatasetIDs, (string(dsid)))
+		}
+
+		log.Println("datasetIDs", ds.DatasetIDs)
+		if err != nil {
+			log.Fatal(err)
+		}
+
+		log.Println("returning " + ds.Name)
+		return &ds, nil
+	}
+	err = resp.Err()
+	if err != nil {
+		log.Fatal(err)
+	}
+	return &pb.Algorithm{}, nil
 }
 func (s store) GetAlgorithms(ctx context.Context, algos *pb.Algorithm) (*pb.MultipleAlgorithms, error) {
 	log.Print("query store: query algorithm request")
